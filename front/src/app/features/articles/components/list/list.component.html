@@ -1,0 +1,37 @@
+<div class="list">
+    <mat-card>
+        <mat-card-header fxLayout="row" fxLayoutAlign="space-between center">
+            <mat-card-title class="m0">Articles available</mat-card-title>
+            <button mat-raised-button color="primary" routerLink="create">
+                <mat-icon>add</mat-icon>
+                <span class="ml1">Create</span>
+            </button>
+        </mat-card-header>
+        <div class="items mt2" fxLayout="row" fxLayout.lt-md="column">
+            <mat-card class="item" *ngFor="let article of (articles$ | async)?.articles" fxFlex>
+                <mat-card-header>
+                    <mat-card-title>{{ article.titre }}</mat-card-title>
+                    <mat-card-subtitle>
+                        {{ article.author }}
+                    </mat-card-subtitle>
+                </mat-card-header>
+                <mat-card-content>
+                    <p>
+                        {{ article.content }}
+                    </p>
+                </mat-card-content>
+                <mat-card-actions>
+                    <button mat-raised-button color="primary" [routerLink]="['detail',article.id]">
+                        <mat-icon>search</mat-icon>
+                        <span class="ml1">Detail</span>
+                    </button>
+                    <button *ngIf="article.userId === user?.id" mat-raised-button color="primary"
+                        [routerLink]="['update',article.id]">
+                        <mat-icon>edit</mat-icon>
+                        <span class="ml1">Edit</span>
+                    </button>
+                </mat-card-actions>
+            </mat-card>
+        </div>
+    </mat-card>
+</div>

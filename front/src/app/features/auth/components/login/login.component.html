@@ -23,8 +23,11 @@
         <input matInput formControlName="password" type="password" />
       </mat-form-field>
 
-      <button mat-raised-button color="primary" type="submit" class="submit-btn">
-        Se connecter
+      <mat-error *ngIf="errorMessage" class="error-msg">{{ errorMessage }}</mat-error>
+
+      <button mat-raised-button color="primary" type="submit" class="submit-btn"
+        [disabled]="loginForm.invalid || isLoading">
+        {{ isLoading ? 'Connexion...' : 'Se connecter' }}
       </button>
     </form>
   </main>

@@ -16,7 +16,9 @@ const routes: Routes = [
 
   // Routes privées
   { path: '', component: HomeComponent, canActivate: [AuthGuard] },
-  { path: 'articles', component: ListComponent, canActivate: [AuthGuard], loadChildren: () => import('./features/article/article.module').then(m => m.ArticleModule) },
+
+  // Temporairement public
+  { path: 'articles', loadChildren: () => import('./features/articles/articles.module').then(m => m.ArticlesModule) },
 ];
 
 @NgModule({

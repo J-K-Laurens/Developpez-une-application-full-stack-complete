@@ -3,7 +3,7 @@ import { Injectable } from '@angular/core';
 import { Observable, pipe } from 'rxjs';
 import { Article } from '../interfaces/article.interface';
 import { ArticlesResponse } from '../interfaces/api/articleResponse.interface';
-//import { RentalsResponse } from '../interfaces/api/rentalsResponse.interface';
+//import { ArticlesResponse } from '../interfaces/api/articlesResponse.interface';
 import { map } from 'rxjs/operators';
 
 @Injectable({
@@ -25,11 +25,11 @@ export class ArticlesService {
     return this.httpClient.get<Article>(`${this.pathService}/${id}`);
   }
 
-  /*public create(form: FormData): Observable<RentalResponse> {
-    return this.httpClient.post<RentalResponse>(this.pathService, form);
+  /*public create(form: FormData): Observable<ArticleResponse> {
+    return this.httpClient.post<ArticleResponse>(this.pathService, form);
   }
 
-  public update(id: string, form: FormData): Observable<RentalResponse> {
-    return this.httpClient.put<RentalResponse>(`${this.pathService}/${id}`, form);
+  public update(id: string, form: FormData): Observable<ArticleResponse> {
+    return this.httpClient.put<ArticleResponse>(`${this.pathService}/${id}`, form);
   }*/
 }

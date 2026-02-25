@@ -1,37 +1,38 @@
-<div class="list">
-    <mat-card>
-        <mat-card-header fxLayout="row" fxLayoutAlign="space-between center">
-            <mat-card-title class="m0">Articles available</mat-card-title>
-            <button mat-raised-button color="primary" routerLink="create">
-                <mat-icon>add</mat-icon>
-                <span class="ml1">Create</span>
-            </button>
-        </mat-card-header>
-        <div class="items mt2" fxLayout="row" fxLayout.lt-md="column">
-            <mat-card class="item" *ngFor="let article of (articles$ | async)?.articles" fxFlex>
-                <mat-card-header>
-                    <mat-card-title>{{ article.titre }}</mat-card-title>
-                    <mat-card-subtitle>
-                        {{ article.author }}
-                    </mat-card-subtitle>
-                </mat-card-header>
-                <mat-card-content>
-                    <p>
-                        {{ article.content }}
-                    </p>
-                </mat-card-content>
-                <mat-card-actions>
-                    <button mat-raised-button color="primary" [routerLink]="['detail',article.id]">
-                        <mat-icon>search</mat-icon>
-                        <span class="ml1">Detail</span>
-                    </button>
-                    <button *ngIf="article.userId === user?.id" mat-raised-button color="primary"
-                        [routerLink]="['update',article.id]">
-                        <mat-icon>edit</mat-icon>
-                        <span class="ml1">Edit</span>
-                    </button>
-                </mat-card-actions>
-            </mat-card>
+<div class="page">
+  <div class="page-inner">
+
+    <div class="page-header">
+      <button mat-raised-button color="primary" routerLink="create" class="create-btn">
+        Créer un article
+      </button>
+      <span class="sort-label">Trier par &nbsp;↓</span>
+    </div>
+
+    <ng-container *ngIf="articles$ | async as result; else loading">
+
+      <p *ngIf="result.articles.length === 0" class="empty-msg">
+        Aucun article disponible pour le moment.
+      </p>
+
+      <div class="cards-grid">
+        <div class="article-card" *ngFor="let article of result.articles"
+             [routerLink]="['detail', article.id]">
+          <h2 class="card-title">{{ article.titre ?? 'Sans titre' }}</h2>
+          <div class="card-meta">
+            <span>{{ article.date | date:'dd/MM/yyyy' }}</span>
+            <span>{{ article.author ?? 'Auteur inconnu' }}</span>
+          </div>
+          <p class="card-desc">
+            {{ article.content | slice:0:200 }}{{ (article.content?.length ?? 0) > 200 ? '...' : '' }}
+          </p>
         </div>
-    </mat-card>
+      </div>
+
+    </ng-container>
+
+    <ng-template #loading>
+      <p class="empty-msg">Chargement des articles…</p>
+    </ng-template>
+
+  </div>
 </div>

@@ -6,16 +6,20 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { BrowserModule } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { ConnectionComponent } from './pages/connection/connection.component';
 import { HomeComponent } from './pages/home/home.component';
 import { AuthModule } from './features/auth/auth.module';
+import { JwtInterceptor } from './interceptors/jwt.interceptor';
+import { NavbarComponent } from './components/navbar/navbar.component';
 
 @NgModule({
-  declarations: [AppComponent, HomeComponent, ConnectionComponent],
+  declarations: [AppComponent, HomeComponent, ConnectionComponent, NavbarComponent],
   imports: [
     BrowserModule,
+    HttpClientModule,
     AppRoutingModule,
     BrowserAnimationsModule,
     AuthModule,
@@ -25,7 +29,9 @@ import { AuthModule } from './features/auth/auth.module';
     MatIconModule,
     MatInputModule,
   ],
-  providers: [],
+  providers: [
+    { provide: HTTP_INTERCEPTORS, useClass: JwtInterceptor, multi: true }
+  ],
   bootstrap: [AppComponent],
 })
 export class AppModule {}

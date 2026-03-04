@@ -1,10 +1,10 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { Observable, pipe } from 'rxjs';
+import { Observable } from 'rxjs';
+import { map } from 'rxjs/operators';
 import { Article } from '../interfaces/article.interface';
 import { ArticlesResponse } from '../interfaces/api/articleResponse.interface';
-//import { ArticlesResponse } from '../interfaces/api/articlesResponse.interface';
-import { map } from 'rxjs/operators';
+import { ArticleDetail } from '../interfaces/article-detail.interface';
 
 @Injectable({
   providedIn: 'root'
@@ -20,16 +20,20 @@ export class ArticlesService {
       map(data => ({ articles: data, message: 'Articles fetched successfully' } as ArticlesResponse))
     );
   }
-/*
-  public detail(id: string): Observable<Article> {
-    return this.httpClient.get<Article>(`${this.pathService}/${id}`);
+
+  public getArticleFull(id: number): Observable<ArticleDetail> {
+    return this.httpClient.get<ArticleDetail>(`${this.pathService}/${id}/full`);
   }
 
-  /*public create(form: FormData): Observable<ArticleResponse> {
-    return this.httpClient.post<ArticleResponse>(this.pathService, form);
+  public postComment(articleId: number, content: string): Observable<any> {
+    return this.httpClient.post(`${this.pathService}/${articleId}/comments`, { content });
   }
 
-  public update(id: string, form: FormData): Observable<ArticleResponse> {
-    return this.httpClient.put<ArticleResponse>(`${this.pathService}/${id}`, form);
-  }*/
+  public createArticle(article: any): Observable<any> {
+    return this.httpClient.post(this.pathService, article);
+  }
+
+  public addTopicToArticle(articleId: number, topicId: number): Observable<any> {
+    return this.httpClient.post(`${this.pathService}/${articleId}/topics/${topicId}`, {});
+  }
 }

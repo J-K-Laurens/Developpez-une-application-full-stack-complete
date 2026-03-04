@@ -2,12 +2,13 @@ import { LOCALE_ID, NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ArticleRoutingModule } from './article-routing.module';
 import { ListComponent } from './components/list/list.component';
-//import { FormComponent } from './components/form/form.component';
-//import { DetailComponent } from './components/detail/detail.component';
+import { DetailComponent } from './components/detail/detail.component';
+import { CreateComponent } from './components/create/create.component';
 import { MatCardModule } from '@angular/material/card';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
+import { MatSelectModule } from '@angular/material/select';
 import { registerLocaleData } from '@angular/common';
 import localeFr from '@angular/common/locales/fr';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
@@ -21,14 +22,15 @@ const materialModules = [
   MatFormFieldModule,
   MatIconModule,
   MatInputModule,
+  MatSelectModule,
   MatSnackBarModule
 ];
 
 @NgModule({
   declarations: [
-    ListComponent//,
-    //FormComponent,
-    //DetailComponent
+    ListComponent,
+    DetailComponent,
+    CreateComponent
   ],
   imports: [
     CommonModule,

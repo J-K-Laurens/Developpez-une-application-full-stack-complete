@@ -3,6 +3,7 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { AuthService } from '../../services/auth.service';
 import { SessionService } from 'src/app/services/session.service';
+import { PasswordValidator } from '../../validators/password.validator';
 
 @Component({
   selector: 'app-register',
@@ -23,7 +24,7 @@ export class RegisterComponent implements OnInit {
     this.registerForm = this.fb.group({
       username: ['', [Validators.required, Validators.minLength(3)]],
       email: ['', [Validators.required, Validators.email]],
-      password: ['', [Validators.required, Validators.minLength(6)]],
+      password: ['', [Validators.required, PasswordValidator.strength()]],
     });
   }
 
@@ -59,7 +60,7 @@ export class RegisterComponent implements OnInit {
         if (err.status === 409) {
           this.errorMessage = 'Un compte existe déjà avec cet email.';
         } else if (err.status === 400) {
-          this.errorMessage = 'Données invalides (email, nom ou mot de passe incorrect).';
+          this.errorMessage = err.error?.message ?? 'Données invalides (email, nom ou mot de passe incorrect).';
         } else if (err.status === 0) {
           this.errorMessage = 'Impossible de joindre le serveur. Vérifiez que l\'API est lancée.';
         } else {

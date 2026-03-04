@@ -5,7 +5,9 @@
       <button mat-raised-button color="primary" routerLink="create" class="create-btn">
         Créer un article
       </button>
-      <span class="sort-label">Trier par &nbsp;↓</span>
+      <button mat-button class="sort-btn" (click)="toggleSort()">
+        Trier par &nbsp;{{ sortOrder === 'desc' ? '↓ Plus récent' : '↑ Plus ancien' }}
+      </button>
     </div>
 
     <ng-container *ngIf="articles$ | async as result; else loading">

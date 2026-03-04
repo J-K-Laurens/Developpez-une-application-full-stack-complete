@@ -1,0 +1,64 @@
+<div class="page">
+  <div class="page-inner">
+
+    <!-- En-tête -->
+    <div class="page-header">
+      <button mat-icon-button class="back-btn" (click)="back()">
+        <mat-icon>arrow_back</mat-icon>
+      </button>
+      <h1 class="page-title">Créer un article</h1>
+    </div>
+
+    <!-- Formulaire -->
+    <form [formGroup]="createForm" (ngSubmit)="submit()" class="form">
+
+      <mat-form-field appearance="outline" class="full-width">
+        <mat-label>Titre</mat-label>
+        <input matInput formControlName="titre" type="text" />
+        <mat-error *ngIf="createForm.get('titre')?.hasError('required')">
+          Le titre est obligatoire.
+        </mat-error>
+        <mat-error *ngIf="createForm.get('titre')?.hasError('minlength')">
+          Le titre doit avoir au moins 3 caractères.
+        </mat-error>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline" class="full-width">
+        <mat-label>Contenu</mat-label>
+        <textarea matInput formControlName="content" rows="8"></textarea>
+        <mat-error *ngIf="createForm.get('content')?.hasError('required')">
+          Le contenu est obligatoire.
+        </mat-error>
+        <mat-error *ngIf="createForm.get('content')?.hasError('minlength')">
+          Le contenu doit avoir au moins 10 caractères.
+        </mat-error>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline" class="full-width">
+        <mat-label>Thème</mat-label>
+        <mat-select formControlName="topicId">
+          <mat-option value="">-- Sélectionner un thème --</mat-option>
+          <mat-option *ngFor="let topic of topics" [value]="topic.id">
+            {{ topic.name }}
+          </mat-option>
+        </mat-select>
+        <mat-error *ngIf="createForm.get('topicId')?.hasError('required')">
+          Sélectionner un thème est obligatoire.
+        </mat-error>
+      </mat-form-field>
+
+      <mat-error *ngIf="errorMessage" class="feedback error">
+        {{ errorMessage }}
+      </mat-error>
+
+      <div class="button-group">
+        <button mat-raised-button color="primary" type="submit"
+                class="submit-btn" [disabled]="isLoading || createForm.invalid">
+          {{ isLoading ? 'Création...' : 'Créer l\'article' }}
+        </button>
+      </div>
+
+    </form>
+
+  </div>
+</div>

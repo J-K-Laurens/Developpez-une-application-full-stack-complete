@@ -1,9 +1,17 @@
 .navbar {
+  background: #fff;
+  position: relative;
+}
+
+.navbar-wrapper {
   display: flex;
   align-items: center;
   justify-content: space-between;
   padding: 0.75rem 1.5rem;
-  background: #fff;
+  max-width: 1200px;
+  margin: 0 auto;
+  width: 100%;
+  box-sizing: border-box;
 }
 
 .navbar-logo {
@@ -40,12 +48,18 @@
 
 .avatar-btn {
   margin-left: 0.5rem;
-  color: #888;
+  color: #999;
 
   mat-icon {
-    font-size: 2rem;
-    width: 2rem;
-    height: 2rem;
+    
+  }
+}
+
+.hamburger-btn {
+  display: none;
+  color: #7c3aed;
+  mat-icon {
+    
   }
 }
 
@@ -53,4 +67,104 @@
   margin: 0;
   border: none;
   border-top: 1px solid rgba(0, 0, 0, 0.12);
+}
+
+// Mobile menu sidebar
+.mobile-menu {
+  position: fixed;
+  top: 0;
+  right: -100%;
+  width: 70%;
+  max-width: 300px;
+  height: 100vh;
+  background: #fff;
+  box-shadow: -2px 0 8px rgba(0, 0, 0, 0.15);
+  transition: right 0.3s ease-in-out;
+  z-index: 999;
+  overflow-y: auto;
+
+  &.open {
+    right: 0;
+  }
+}
+
+.mobile-menu-content {
+  display: flex;
+  flex-direction: column;
+  padding: 1rem;
+  height: 100%;
+  justify-content: space-between;
+}
+
+.mobile-menu-nav {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+
+.mobile-menu-footer {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  padding-top: 0.5rem;
+  padding-bottom: 1rem;
+  padding-right: 0.5rem;
+  border-top: 1px solid rgba(0, 0, 0, 0.12);
+}
+
+.mobile-avatar-btn {
+  color: #999;
+  width: 2.75rem;
+  height: 2.75rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  mat-icon {
+      
+  }
+}
+
+.mobile-nav-link {
+  width: 100%;
+  text-align: left;
+  font-size: 1rem;
+  font-weight: 500;
+  color: #222;
+  padding: 0.75rem 1rem;
+
+  &.logout {
+    color: #d32f2f;
+    font-weight: 600;
+  }
+
+  &.active {
+    color: #7c3aed;
+    font-weight: 700;
+  }
+}
+
+// Responsive design
+@media (max-width: 768px) {
+  .navbar {
+    padding: 0.75rem 1rem;
+  }
+
+  .navbar-right {
+    display: none;
+  }
+
+  .hamburger-btn {
+    display: block;
+  }
+
+  .navbar-logo {
+    height: 40px;
+  }
+}
+
+@media (max-width: 600px) {
+  .mobile-menu {
+    width: 85%;
+  }
 }

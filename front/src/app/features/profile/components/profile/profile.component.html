@@ -1,0 +1,73 @@
+<div class="page">
+  <div class="page-inner">
+
+    <!-- Profil -->
+    <section class="section">
+      <h1 class="section-title">Profil utilisateur</h1>
+
+      <form [formGroup]="profileForm" (ngSubmit)="save()" class="form">
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Nom d'utilisateur</mat-label>
+          <input matInput formControlName="firstName" type="text" />
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Email</mat-label>
+          <input matInput formControlName="email" type="email" />
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Nouveau mot de passe</mat-label>
+          <input matInput formControlName="password" type="password"
+                 placeholder="Laisser vide pour ne pas modifier" />
+          <mat-error *ngIf="profileForm?.get('password')?.hasError('minLength')">
+            Le mot de passe doit contenir au moins 8 caractères.
+          </mat-error>
+          <mat-error *ngIf="profileForm?.get('password')?.hasError('digit')">
+            Le mot de passe doit contenir au moins un chiffre.
+          </mat-error>
+          <mat-error *ngIf="profileForm?.get('password')?.hasError('lowercase')">
+            Le mot de passe doit contenir au moins une lettre minuscule.
+          </mat-error>
+          <mat-error *ngIf="profileForm?.get('password')?.hasError('uppercase')">
+            Le mot de passe doit contenir au moins une lettre majuscule.
+          </mat-error>
+          <mat-error *ngIf="profileForm?.get('password')?.hasError('special')">
+            Le mot de passe doit contenir au moins un caractère spécial (!@#$%^&*...).
+          </mat-error>
+        </mat-form-field>
+
+        <mat-error *ngIf="errorMessage" class="feedback error">{{ errorMessage }}</mat-error>
+        <p *ngIf="successMessage" class="feedback success">{{ successMessage }}</p>
+
+        <button mat-raised-button color="primary" type="submit"
+                class="save-btn" [disabled]="isLoading">
+          {{ isLoading ? 'Sauvegarde...' : 'Sauvegarder' }}
+        </button>
+      </form>
+    </section>
+
+    <hr class="divider" />
+
+    <!-- Abonnements -->
+    <section class="section">
+      <h2 class="section-title">Abonnements</h2>
+
+      <p *ngIf="subscriptions.length === 0" class="empty-msg">
+        Vous n'êtes abonné à aucun thème pour l'instant.
+      </p>
+
+      <div class="cards-grid">
+        <div class="topic-card" *ngFor="let sub of subscriptions">
+          <div class="card-body">
+            <h3 class="card-title">{{ sub.name ?? 'Sans nom' }}</h3>
+          </div>
+          <button mat-raised-button class="unsub-btn" (click)="unsubscribe(sub.id)">
+            Se désabonner
+          </button>
+        </div>
+      </div>
+    </section>
+
+  </div>
+</div>

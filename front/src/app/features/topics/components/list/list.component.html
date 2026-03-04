@@ -1,0 +1,34 @@
+<div class="page">
+  <div class="page-inner">
+
+    <ng-container *ngIf="!isLoading; else loading">
+
+      <p *ngIf="topics.length === 0" class="empty-msg">
+        Aucun thème disponible pour le moment.
+      </p>
+
+      <div class="cards-grid">
+        <div class="topic-card" *ngFor="let topic of topics">
+          <div class="card-body">
+            <h2 class="card-title">{{ topic.name ?? 'Sans nom' }}</h2>
+          </div>
+
+          <button
+            mat-raised-button
+            class="sub-btn"
+            [class.subscribed]="isSubscribed(topic.id)"
+            [disabled]="isSubscribed(topic.id)"
+            (click)="subscribe(topic.id)">
+            {{ isSubscribed(topic.id) ? 'Déjà abonné' : "S'abonner" }}
+          </button>
+        </div>
+      </div>
+
+    </ng-container>
+
+    <ng-template #loading>
+      <p class="empty-msg">Chargement des thèmes…</p>
+    </ng-template>
+
+  </div>
+</div>

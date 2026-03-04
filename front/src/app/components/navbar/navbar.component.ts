@@ -8,6 +8,7 @@ import { SessionService } from 'src/app/services/session.service';
   styleUrls: ['./navbar.component.scss']
 })
 export class NavbarComponent {
+  menuOpen = false;
 
   constructor(
     private sessionService: SessionService,
@@ -18,8 +19,17 @@ export class NavbarComponent {
     return this.sessionService.isLogged;
   }
 
+  toggleMenu(): void {
+    this.menuOpen = !this.menuOpen;
+  }
+
+  closeMenu(): void {
+    this.menuOpen = false;
+  }
+
   logout(): void {
     this.sessionService.logOut();
     this.router.navigate(['/connection']);
+    this.closeMenu();
   }
 }

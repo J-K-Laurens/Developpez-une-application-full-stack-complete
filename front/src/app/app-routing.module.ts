@@ -17,8 +17,10 @@ const routes: Routes = [
   // Routes privées
   { path: '', component: HomeComponent, canActivate: [AuthGuard] },
 
-  // Temporairement public
-  { path: 'articles', loadChildren: () => import('./features/articles/articles.module').then(m => m.ArticlesModule) },
+  // Routes privées lazy-loaded
+  { path: 'articles', canActivate: [AuthGuard], loadChildren: () => import('./features/articles/articles.module').then(m => m.ArticlesModule) },
+  { path: 'themes', canActivate: [AuthGuard], loadChildren: () => import('./features/topics/topics.module').then(m => m.TopicsModule) },
+  { path: 'profile', canActivate: [AuthGuard], loadChildren: () => import('./features/profile/profile.module').then(m => m.ProfileModule) },
 ];
 
 @NgModule({

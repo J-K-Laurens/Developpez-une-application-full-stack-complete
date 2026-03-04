@@ -1,0 +1,60 @@
+<div class="page" *ngIf="article; else loading">
+  <div class="page-inner">
+
+    <!-- En-tête -->
+    <div class="article-header">
+      <button mat-icon-button class="back-btn" (click)="back()">
+        <mat-icon>arrow_back</mat-icon>
+      </button>
+      <h1 class="article-title">{{ article.titre ?? 'Sans titre' }}</h1>
+    </div>
+
+    <!-- Méta -->
+    <div class="article-meta">
+      <span>{{ article.date | date:'dd/MM/yyyy' }}</span>
+      <span>{{ article.authorName }}</span>
+      <span *ngIf="article.topicName">{{ article.topicName }}</span>
+    </div>
+
+    <!-- Contenu -->
+    <p class="article-content">{{ article.content }}</p>
+
+    <hr class="divider" />
+
+    <!-- Commentaires -->
+    <section class="comments-section">
+      <h2 class="comments-title">Commentaires</h2>
+
+      <div class="comment-list">
+        <div class="comment-item" *ngFor="let c of article.comments">
+          <span class="comment-author">{{ c.authorName }}</span>
+          <div class="comment-bubble">{{ c.content }}</div>
+        </div>
+        <p *ngIf="article.comments.length === 0" class="no-comments">
+          Aucun commentaire pour l'instant.
+        </p>
+      </div>
+
+      <!-- Saisie -->
+      <div class="comment-input-row">
+        <textarea
+          class="comment-textarea"
+          placeholder="Écrivez ici votre commentaire"
+          [(ngModel)]="commentText"
+          (keydown.enter)="$event.preventDefault(); submitComment()"
+          rows="3">
+        </textarea>
+        <button class="send-btn" (click)="submitComment()" [disabled]="!commentText.trim() || isSubmitting">
+          <mat-icon>send</mat-icon>
+        </button>
+      </div>
+    </section>
+
+  </div>
+</div>
+
+<ng-template #loading>
+  <div class="page">
+    <p class="loading-msg">Chargement de l'article…</p>
+  </div>
+</ng-template>

@@ -1,16 +1,44 @@
 <ng-container *ngIf="isLogged">
   <nav class="navbar">
-    <div class="navbar-left">
-      <img src="/assets/logo_p6.png" alt="MDD" class="navbar-logo" routerLink="/articles" />
-    </div>
-    <div class="navbar-right">
-      <button mat-button class="nav-link logout" (click)="logout()">Se déconnecter</button>
-      <button mat-button class="nav-link" routerLink="/articles" routerLinkActive="active">Articles</button>
-      <button mat-button class="nav-link" routerLink="/themes" routerLinkActive="active">Thèmes</button>
-      <button mat-icon-button routerLink="/profile" class="avatar-btn">
-        <mat-icon>account_circle</mat-icon>
+    <div class="navbar-wrapper">
+      <div class="navbar-left">
+        <img src="/assets/logo_p6.png" alt="MDD" class="navbar-logo" routerLink="/articles" (click)="closeMenu()" />
+      </div>
+      <div class="navbar-right">
+        <button mat-button class="nav-link logout" (click)="logout()">Se déconnecter</button>
+        <button mat-button class="nav-link" routerLink="/articles" routerLinkActive="active" (click)="closeMenu()">Articles</button>
+        <button mat-button class="nav-link" routerLink="/themes" routerLinkActive="active" (click)="closeMenu()">Thèmes</button>
+        <button mat-icon-button routerLink="/profile" class="avatar-btn" (click)="closeMenu()">
+          <mat-icon>account_circle</mat-icon>
+        </button>
+      </div>
+      <button mat-icon-button class="hamburger-btn" (click)="toggleMenu()" aria-label="Menu">
+        <mat-icon>{{ menuOpen ? 'close' : 'menu' }}</mat-icon>
       </button>
     </div>
   </nav>
+  
+  <!-- Mobile Menu Sidebar -->
+  <div class="mobile-menu" [class.open]="menuOpen" (click)="closeMenu()">
+    <div class="mobile-menu-content" (click)="$event.stopPropagation()">
+      <nav class="mobile-menu-nav">
+        <button mat-button class="mobile-nav-link logout" (click)="logout()">
+          Se déconnecter
+        </button>
+        <button mat-button class="mobile-nav-link" routerLink="/articles" routerLinkActive="active" (click)="closeMenu()">
+          Articles
+        </button>
+        <button mat-button class="mobile-nav-link" routerLink="/themes" routerLinkActive="active" (click)="closeMenu()">
+          Thèmes
+        </button>
+      </nav>
+      <div class="mobile-menu-footer">
+        <button mat-icon-button routerLink="/profile" class="mobile-avatar-btn" (click)="closeMenu()">
+          <mat-icon>account_circle</mat-icon>
+        </button>
+      </div>
+    </div>
+  </div>
+  
   <hr class="navbar-divider" />
 </ng-container>

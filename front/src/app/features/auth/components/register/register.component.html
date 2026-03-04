@@ -26,6 +26,24 @@
       <mat-form-field appearance="outline" class="full-width">
         <mat-label>Mot de passe</mat-label>
         <input matInput formControlName="password" type="password" />
+        <mat-error *ngIf="registerForm.get('password')?.hasError('required')">
+          Le mot de passe est obligatoire.
+        </mat-error>
+        <mat-error *ngIf="registerForm.get('password')?.hasError('minLength')">
+          Le mot de passe doit contenir au moins 8 caractères.
+        </mat-error>
+        <mat-error *ngIf="registerForm.get('password')?.hasError('digit')">
+          Le mot de passe doit contenir au moins un chiffre.
+        </mat-error>
+        <mat-error *ngIf="registerForm.get('password')?.hasError('lowercase')">
+          Le mot de passe doit contenir au moins une lettre minuscule.
+        </mat-error>
+        <mat-error *ngIf="registerForm.get('password')?.hasError('uppercase')">
+          Le mot de passe doit contenir au moins une lettre majuscule.
+        </mat-error>
+        <mat-error *ngIf="registerForm.get('password')?.hasError('special')">
+          Le mot de passe doit contenir au moins un caractère spécial (!@#$%^&*...).
+        </mat-error>
       </mat-form-field>
 
       <mat-error *ngIf="errorMessage" class="error-msg">{{ errorMessage }}</mat-error>

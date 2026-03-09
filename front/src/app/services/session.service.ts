@@ -7,7 +7,7 @@ import { User } from '../interfaces/user.interface';
 })
 export class SessionService {
 
-  public isLogged = false;
+  public isLogged = !!localStorage.getItem('token');
   public user: User | undefined;
 
   private isLoggedSubject = new BehaviorSubject<boolean>(this.isLogged);

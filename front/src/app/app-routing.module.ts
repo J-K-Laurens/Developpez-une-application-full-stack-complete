@@ -8,16 +8,15 @@ import { AuthGuard } from './guards/auth.guard';
 import { UnauthGuard } from './guards/unauth.guard';
 
 const routes: Routes = [
+  // Route par défaut - si pas connecté va au login, sinon aux articles
+  { path: '', component: HomeComponent },
+  
   // Routes publiques
-  { path: '', component: HomeComponent, canActivate: [UnauthGuard] },
-  { path: 'connection', component: ConnectionComponent, canActivate: [UnauthGuard] },
-  { path: 'login', component: LoginComponent, canActivate: [UnauthGuard] },
-  { path: 'register', component: RegisterComponent, canActivate: [UnauthGuard] },
+  { path: 'connection', component: ConnectionComponent },
+  { path: 'login', component: LoginComponent },
+  { path: 'register', component: RegisterComponent },
 
   // Routes privées
-  { path: '', component: HomeComponent, canActivate: [AuthGuard] },
-
-  // Routes privées lazy-loaded
   { path: 'articles', canActivate: [AuthGuard], loadChildren: () => import('./features/articles/articles.module').then(m => m.ArticlesModule) },
   { path: 'themes', canActivate: [AuthGuard], loadChildren: () => import('./features/topics/topics.module').then(m => m.TopicsModule) },
   { path: 'profile', canActivate: [AuthGuard], loadChildren: () => import('./features/profile/profile.module').then(m => m.ProfileModule) },

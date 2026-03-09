@@ -13,6 +13,7 @@ import { ConnectionComponent } from './pages/connection/connection.component';
 import { HomeComponent } from './pages/home/home.component';
 import { AuthModule } from './features/auth/auth.module';
 import { JwtInterceptor } from './interceptors/jwt.interceptor';
+import { ErrorInterceptor } from './interceptors/error.interceptor';
 import { NavbarComponent } from './components/navbar/navbar.component';
 
 @NgModule({
@@ -30,7 +31,8 @@ import { NavbarComponent } from './components/navbar/navbar.component';
     MatInputModule,
   ],
   providers: [
-    { provide: HTTP_INTERCEPTORS, useClass: JwtInterceptor, multi: true }
+    { provide: HTTP_INTERCEPTORS, useClass: JwtInterceptor, multi: true },
+    { provide: HTTP_INTERCEPTORS, useClass: ErrorInterceptor, multi: true }
   ],
   bootstrap: [AppComponent],
 })

@@ -1,10 +1,9 @@
 package com.openclassrooms.mddapi.services;
 
+import com.openclassrooms.mddapi.exception.ResourceNotFoundException;
 import com.openclassrooms.mddapi.model.Topic;
 import com.openclassrooms.mddapi.repository.TopicRepository;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
-import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
 
@@ -23,8 +22,7 @@ public class TopicService {
 
     public Topic findById(Long id) {
         return topicRepository.findById(id)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND,
-                        "Topic avec l'id " + id + " introuvable"));
+                .orElseThrow(() -> new ResourceNotFoundException("Topic", "id", id));
     }
 
     public List<Topic> findByArticleId(Long articleId) {

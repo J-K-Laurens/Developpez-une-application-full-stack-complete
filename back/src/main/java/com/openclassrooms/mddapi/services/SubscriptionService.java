@@ -1,14 +1,14 @@
 package com.openclassrooms.mddapi.services;
 
+import com.openclassrooms.mddapi.exception.BusinessRuleException;
+import com.openclassrooms.mddapi.exception.ResourceNotFoundException;
 import com.openclassrooms.mddapi.model.Subscription;
 import com.openclassrooms.mddapi.model.Topic;
 import com.openclassrooms.mddapi.repository.SubscriptionRepository;
 import com.openclassrooms.mddapi.repository.TopicRepository;
 import com.openclassrooms.mddapi.repository.UserRepository;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -40,10 +40,10 @@ public class SubscriptionService {
     public void subscribe(String email, Long topicId) {
         Long userId = getUserIdByEmail(email);
         if (!topicRepository.existsById(topicId)) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Thème introuvable");
+            throw new ResourceNotFoundException("Topic", "id", topicId);
         }
         if (subscriptionRepository.existsByUserIdAndTopicId(userId, topicId)) {
-            throw new ResponseStatusException(HttpStatus.CONFLICT, "Déjà abonné à ce thème");
+            throw new BusinessRuleException("Déjà abonné à ce thème", "ALREADY_SUBSCRIBED");
         }
         Subscription sub = new Subscription();
         sub.setUserId(userId);
@@ -55,14 +55,14 @@ public class SubscriptionService {
     public void unsubscribe(String email, Long topicId) {
         Long userId = getUserIdByEmail(email);
         if (!subscriptionRepository.existsByUserIdAndTopicId(userId, topicId)) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Abonnement introuvable");
+            throw new ResourceNotFoundException("Abonnement", "userId", userId);
         }
         subscriptionRepository.deleteByUserIdAndTopicId(userId, topicId);
     }
 
     private Long getUserIdByEmail(String email) {
         return userRepository.findByEmail(email)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Utilisateur introuvable"))
+                .orElseThrow(() -> new ResourceNotFoundException("Utilisateur", "email", email))
                 .getId();
     }
 }

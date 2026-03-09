@@ -13,6 +13,7 @@ export class DetailComponent implements OnInit {
   article: ArticleDetail | null = null;
   commentText = '';
   isSubmitting = false;
+  errorMessage: string | null = null;
 
   constructor(
     private route: ActivatedRoute,
@@ -24,7 +25,10 @@ export class DetailComponent implements OnInit {
     const id = Number(this.route.snapshot.paramMap.get('id'));
     this.articlesService.getArticleFull(id).subscribe({
       next: (data) => this.article = data,
-      error: () => this.router.navigate(['/articles'])
+      error: () => {
+        this.errorMessage = 'Article non trouvé. Redirection en cours...';
+        setTimeout(() => this.router.navigate(['/articles']), 2000);
+      }
     });
   }
 
@@ -41,9 +45,15 @@ export class DetailComponent implements OnInit {
         this.isSubmitting = false;
         const text = this.commentText.trim();
         this.commentText = '';
-        this.articlesService.getArticleFull(this.article!.id).subscribe(data => this.article = data);
+        this.articlesService.getArticleFull(this.article!.id).subscribe(
+          data => this.article = data,
+          error => this.errorMessage = 'Erreur lors du chargement. Veuillez rafraîchir.'
+        );
       },
-      error: () => this.isSubmitting = false
+      error: (err) => {
+        this.isSubmitting = false;
+        this.errorMessage = 'Erreur lors de la publication du commentaire';
+      }
     });
   }
 }

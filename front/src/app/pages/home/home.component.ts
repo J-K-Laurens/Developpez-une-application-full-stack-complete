@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
+import { SessionService } from '../../services/session.service';
 
 @Component({
   selector: 'app-home',
@@ -7,9 +8,17 @@ import { Router } from '@angular/router';
   styleUrls: ['./home.component.scss'],
 })
 export class HomeComponent implements OnInit {
-  constructor(private router: Router) {}
+  constructor(
+    private router: Router,
+    private sessionService: SessionService
+  ) {}
 
-  ngOnInit(): void {}
+  ngOnInit(): void {
+    // Si déjà connecté, redirige vers articles
+    if (this.sessionService.isLogged) {
+      this.router.navigate(['/articles']);
+    }
+  }
 
   start() {
     this.router.navigate(['/connection']);

@@ -1,4 +1,4 @@
-<div class="page" *ngIf="article; else loading">
+<div class="page" *ngIf="article && !errorMessage; else error">
   <div class="page-inner">
 
     <!-- En-tête -->
@@ -56,5 +56,13 @@
 <ng-template #loading>
   <div class="page">
     <p class="loading-msg">Chargement de l'article…</p>
+  </div>
+</ng-template>
+<ng-template #error>
+  <div class="page">
+    <div class="error-container">
+      <h2>{{ errorMessage }}</h2>
+      <button mat-raised-button color="primary" (click)="back()">Retour aux articles</button>
+    </div>
   </div>
 </ng-template>

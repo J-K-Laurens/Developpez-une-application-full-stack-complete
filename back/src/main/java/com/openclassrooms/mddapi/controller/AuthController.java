@@ -2,6 +2,7 @@ package com.openclassrooms.mddapi.controller;
 
 import com.openclassrooms.mddapi.dto.AuthDto;
 import com.openclassrooms.mddapi.dto.UserDto;
+import com.openclassrooms.mddapi.exception.BusinessRuleException;
 import com.openclassrooms.mddapi.services.JwtService;
 import com.openclassrooms.mddapi.services.UserService;
 import org.springframework.http.HttpStatus;
@@ -11,12 +12,14 @@ import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 
 @RestController
 @RequestMapping("/api/auth")
+@Validated
 public class AuthController {
 
     private final JwtService jwtService;
@@ -29,39 +32,41 @@ public class AuthController {
         this.userService = userService;
     }
 
+    /**
+     * Authentifie un utilisateur et retourne un token JWT.
+     * @param request Les identifiants de connexion
+     * @return Un token JWT pour les requêtes ultérieures
+     * @throws BadCredentialsException si les identifiants sont incorrects
+     */
     @PostMapping("/login")
-    public ResponseEntity<?> login(@Valid @RequestBody AuthDto.LoginRequest request) {
-        try {
-            Authentication authentication = authenticationManager.authenticate(
-                    new UsernamePasswordAuthenticationToken(request.getEmail(), request.getPassword()));
-            String token = jwtService.generateToken(authentication);
-            return ResponseEntity.ok(new AuthDto.TokenResponse(token));
-        } catch (BadCredentialsException e) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
-                    .body(new AuthDto.ErrorResponse("Identifiants incorrects"));
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body(new AuthDto.ErrorResponse("Erreur lors de l'authentification : " + e.getMessage()));
-        }
-    }
-
-    @PostMapping("/register")
-    public ResponseEntity<?> register(@Valid @RequestBody AuthDto.RegisterRequest request) {
-        try {
-            userService.register(request.getEmail(), request.getName(), request.getPassword());
-        } catch (org.springframework.web.server.ResponseStatusException e) {
-            if (e.getStatus() == HttpStatus.CONFLICT) {
-                return ResponseEntity.status(HttpStatus.CONFLICT)
-                        .body(new AuthDto.ErrorResponse("Un compte existe déjà avec cet email"));
-            }
-            throw e;
-        }
+    public ResponseEntity<AuthDto.TokenResponse> login(@Valid @RequestBody AuthDto.LoginRequest request) {
         Authentication authentication = authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(request.getEmail(), request.getPassword()));
         String token = jwtService.generateToken(authentication);
         return ResponseEntity.ok(new AuthDto.TokenResponse(token));
     }
 
+    /**
+     * Enregistre un nouvel utilisateur.
+     * @param request Les données d'inscription
+     * @return Un token JWT pour les requêtes ultérieures
+     * @throws BusinessRuleException si un compte existe déjà avec cet email
+     */
+    @PostMapping("/register")
+    public ResponseEntity<AuthDto.TokenResponse> register(@Valid @RequestBody AuthDto.RegisterRequest request) {
+        userService.register(request.getEmail(), request.getName(), request.getPassword());
+        
+        // Authentifier l'utilisateur après l'enregistrement
+        Authentication authentication = authenticationManager.authenticate(
+                new UsernamePasswordAuthenticationToken(request.getEmail(), request.getPassword()));
+        String token = jwtService.generateToken(authentication);
+        return ResponseEntity.ok(new AuthDto.TokenResponse(token));
+    }
+
+    /**
+     * Récupère les informations de l'utilisateur actuellement connecté.
+     * @return Les données de l'utilisateur
+     */
     @GetMapping("/me")
     public ResponseEntity<UserDto.Response> getCurrentUser() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();

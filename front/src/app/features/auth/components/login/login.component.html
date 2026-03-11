@@ -13,6 +13,11 @@
     </div>
 
     <form [formGroup]="loginForm" (ngSubmit)="submit()" class="form">
+      <div *ngIf="errorMessage" class="error-banner">
+        <mat-icon class="error-icon">error</mat-icon>
+        <span>{{ errorMessage }}</span>
+      </div>
+
       <mat-form-field appearance="outline" class="full-width">
         <mat-label>E-mail ou nom d'utilisateur</mat-label>
         <input matInput formControlName="emailOrUsername" type="text" />
@@ -22,8 +27,6 @@
         <mat-label>Mot de passe</mat-label>
         <input matInput formControlName="password" type="password" />
       </mat-form-field>
-
-      <mat-error *ngIf="errorMessage" class="error-msg">{{ errorMessage }}</mat-error>
 
       <button mat-raised-button color="primary" type="submit" class="submit-btn"
         [disabled]="loginForm.invalid || isLoading">

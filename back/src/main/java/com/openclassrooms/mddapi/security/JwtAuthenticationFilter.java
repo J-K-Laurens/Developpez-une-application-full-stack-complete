@@ -2,6 +2,7 @@ package com.openclassrooms.mddapi.security;
 
 import com.openclassrooms.mddapi.services.CustomUserDetailsService;
 import com.openclassrooms.mddapi.services.JwtService;
+import com.openclassrooms.mddapi.services.TokenBlacklistService;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -18,21 +19,26 @@ import java.io.IOException;
 /**
  * JWT Authentication Filter for Spring Security.
  * Validates JWT tokens from request headers and sets authentication context.
+ * Also checks if token is blacklisted (e.g., from logout).
  */
 @Component
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
     private final JwtService jwtService;
     private final CustomUserDetailsService userDetailsService;
+    private final TokenBlacklistService tokenBlacklistService;
 
-    public JwtAuthenticationFilter(JwtService jwtService, CustomUserDetailsService userDetailsService) {
+    public JwtAuthenticationFilter(JwtService jwtService, CustomUserDetailsService userDetailsService, 
+                                   TokenBlacklistService tokenBlacklistService) {
         this.jwtService = jwtService;
         this.userDetailsService = userDetailsService;
+        this.tokenBlacklistService = tokenBlacklistService;
     }
 
     /**
      * Filters incoming requests to validate JWT tokens.
      * Extracts user information from valid tokens and sets authentication.
+     * Rejects blacklisted tokens (e.g., from logout).
      * 
      * @param request the HTTP request
      * @param response the HTTP response
@@ -46,6 +52,13 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         try {
             String jwt = getJwtFromRequest(request);
             if (StringUtils.hasText(jwt) && jwtService.validateToken(jwt)) {
+                // Check if token is blacklisted (e.g., user logged out)
+                if (tokenBlacklistService.isTokenBlacklisted(jwt)) {
+                    // Token is blacklisted, don't set authentication
+                    filterChain.doFilter(request, response);
+                    return;
+                }
+                
                 String email = jwtService.getEmailFromToken(jwt);
                 UserDetails userDetails = userDetailsService.loadUserByUsername(email);
                 UsernamePasswordAuthenticationToken authentication =

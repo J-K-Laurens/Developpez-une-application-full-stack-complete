@@ -1,490 +1,353 @@
-# MDD API - Application Full-Stack
+# 🚀 MDD API - Démarrage Windows (Étape par Étape)
 
-Une application full-stack complète avec Angular (frontend) et Spring Boot (backend).
-
-## 🚀 Démarrage Rapide
-
-### Prérequis
-- **Node.js** 16+ (frontend)
-- **Java 11+** (backend)
-- **MySQL 8.0+** (base de données)
-- **Maven 3.6+** (build backend)
-
-### 1️⃣ Configuration de la Base de Données
-
-Créez une base de données MySQL :
-```sql
-CREATE DATABASE mdd;
-```
-
-### 2️⃣ Configuration des Secrets
-
-#### Option A : Variables d'Environnement (Recommandé ✅)
-
-**PowerShell:**
-```powershell
-# Generate a secure JWT secret (minimum 32 characters)
-# Using OpenSSL: openssl rand -hex 32
-# Or online: https://www.uuidgenerator.net/
-
-$env:DB_USERNAME="root"
-$env:DB_PASSWORD="your_mysql_password"
-$env:JWT_SECRET="your_secure_jwt_secret_at_least_32_characters"
-```
-
-**Bash/Linux:**
-```bash
-export DB_USERNAME="root"
-export DB_PASSWORD="your_mysql_password"
-export JWT_SECRET="your_secure_jwt_secret_at_least_32_characters"
-```
-
-#### Option B : Fichier .env (Développement Local)
-
-1. Copier le fichier d'exemple:
-```bash
-cd back
-cp .env.example .env
-```
-
-2. Éditer `back/.env` avec vos valeurs:
-```
-DB_USERNAME=root
-DB_PASSWORD=your_mysql_password
-JWT_SECRET=your_secure_jwt_secret_at_least_32_characters
-```
-
-⚠️ **IMPORTANT**: 
-- **JAMAIS** committer le fichier `.env` en version control
-- Chaque développeur doit créer son propre `.env`
-- Le `.env` est listé dans `.gitignore`
-
-#### Générer une Clé JWT Sécurisée
-
-```bash
-# Avec OpenSSL (recommandé)
-openssl rand -hex 32
-
-# Ou utiliser un générateur UUID
-# https://www.uuidgenerator.net/
-```
-
-Exemple de clé sécurisée (32+ caractères):
-```
-a1b2c3d4e5f6g7h8i9j0k1l2m3n4o5p6q7r8s9t0u1v2w3x4y5z6a7b8c9d0e1f2
-```
-
-### 3️⃣ Lancer le Backend
-
-```bash
-cd back
-
-# Development (avec clé JWT de dev)
-export SPRING_PROFILES_ACTIVE=dev
-mvn spring-boot:run
-
-# Production (REQUIRES environment variables)
-export SPRING_PROFILES_ACTIVE=prod
-mvn spring-boot:run
-```
-
-✅ Le serveur démarre sur `http://localhost:8080`
-
-### 4️⃣ Lancer le Frontend
-
-```bash
-cd front
-npm install
-ng serve
-```
-
-✅ L'app démarre sur `http://localhost:4200`
+Application full-stack: **Angular** (frontend) + **Spring Boot** (backend) avec authentification JWT et logout sécurisé.
 
 ---
 
-## 🔐 Sécurité des Secrets
+## 📋 Prérequis Windows
 
-### Development vs Production
+- ✅ **Java 11+** - Vérifier: `java -version`
+- ✅ **Node.js 16+** - Vérifier: `node -v`
+- ✅ **MySQL 8.0+** - Vérifier: `mysql -u root -p` puis `exit`
+- ✅ **Docker** (pour Redis) - [Télécharger ici](https://www.docker.com/products/docker-desktop/)
+- ✅ **Maven** - Inclus dans le repo (`mvnw.cmd`)
 
-| Aspect | Development | Production |
-|--------|-------------|-----------|
-| JWT Secret | Valeur par défaut de test | Variable d'environnement OBLIGATOIRE |
-| DB Password | Peut être simple | Variable d'environnement sécurisée |
-| DDL Auto | `update` (crée tables) | `validate` (vérifie seulement) |
-| Show SQL | `true` | `false` |
-| Swagger | Activé | Désactivé |
-| Logging | DEBUG | INFO/WARN |
+---
 
-### Fichiers de Configuration
+## 🚀 Lancer l'Application (5 étapes)
 
-- `application.properties` - Configuration commune
-- `application-dev.properties` - Configuration développement (git)
-- `application-prod.properties` - Configuration production (git)
+### 1️⃣ Installer Docker (une fois)
 
-Pour activer un profil:
-```bash
-export SPRING_PROFILES_ACTIVE=dev   # ou prod
+1. 📥 Télécharger: https://www.docker.com/products/docker-desktop/
+2. ✅ Installer et redémarrer Windows
+3. ✅ Vérifier: Ouvrir **PowerShell** et taper:
+
+```powershell
+docker --version
+# Réponse attendue: Docker version 24.0.0 (ou plus)
 ```
 
-### Bonnes Pratiques 🛡️
+---
 
-1. ✅ **JAMAIS** de secrets en dur dans le code
-2. ✅ **JAMAIS** de secrets dans Git
-3. ✅ Utiliser des **variables d'environnement** en production
-4. ✅ Générer une **clé JWT unique** pour chaque environnement
-5. ✅ Utiliser `application-prod.properties` sans valeurs par défaut sensibles
-6. ✅ Ajouter `.env` à `.gitignore`
+### 2️⃣ Démarrer Redis avec Docker
+
+Ouvrir **PowerShell** (n'importe où) et copier-coller:
+
+```powershell
+docker run -d -p 6379:6379 --name redis redis:latest
+```
+
+✅ Réponse: Un ID (exemple: `abc123def456`)
+
+**Vérifier que ça marche:**
+
+```powershell
+docker exec redis redis-cli ping
+# Réponse attendue: PONG
+```
+
+Si vous relancez le PC, relancer cette commande. C'est tout.
+
+---
+
+### 3️⃣ Démarrer MySQL
+
+Si MySQL n'est pas déjà en cours d'exécution:
+
+```powershell
+net start MySQL80
+# Réponse: The MySQL80 service is starting...
+```
+
+**Vérifier:**
+
+```powershell
+mysql -u root -p
+# Taper le mot de passe, puis exit
+```
+
+---
+
+### 4️⃣ Configurer l'Application
+
+Ouvrir l'**Explorateur Windows**, aller dans `back/`:
+
+**Créer un fichier `.env`:**
+
+1. 📂 Dossier `back/`
+2. 📋 Clic droit → Nouveau → Document texte
+3. ✏️ Renommer en `.env` (bien: `.env` / mal: `fichier.txt.env`)
+4. ✏️ Ouvrir avec Notepad et coller:
+
+```
+DB_USERNAME=root
+DB_PASSWORD=password
+JWT_SECRET=a1b2c3d4e5f6g7h8i9j0k1l2m3n4o5p6q7r8s9t0u1v2w3x4y5z6a7b8c9d0e1f2
+```
+
+5. 💾 Sauvegarder (Ctrl+S)
+
+**Pourquoi `.env`?** C'est un fichier de configuration privé (pas commité en Git).
+
+---
+
+### 5️⃣ Lancer le Backend
+
+Ouvrir **PowerShell** dans le dossier `back/`:
+
+```powershell
+# Vérifier que vous êtes dans le bon dossier
+cd E:\_Projets\Projet_6\Developpez-une-application-full-stack-complete\back
+
+# Démarrer le backend
+$env:SPRING_PROFILES_ACTIVE = "dev"
+mvn spring-boot:run
+```
+
+⏳ **Attendre 30-60 secondes...**
+
+✅ Quand vous voyez: `Started MddApiApplication`
+
+Le backend est prêt! 🎉
+
+---
+
+### 6️⃣ Lancer le Frontend
+
+Ouvrir un **nouveau PowerShell** dans le dossier `front/`:
+
+```powershell
+cd E:\_Projets\Projet_6\Developpez-une-application-full-stack-complete\front
+
+npm install
+npm start
+```
+
+⏳ **Attendre 30 secondes...**
+
+✅ Le navigateur ouvre automatiquement: http://localhost:4200
+
+---
+
+## ✅ C'est Prêt!
+
+| Service | URL |
+|---------|-----|
+| **Frontend** | http://localhost:4200 |
+| **Backend** | http://localhost:8080 |
+| **Swagger UI** | http://localhost:8080/swagger-ui.html |
+| **Redis** | localhost:6379 (interne) |
+
+---
+
+## 🧪 Tester le Logout
+
+1. 🌐 Ouvrir http://localhost:4200
+2. 🔑 **Login** avec `admin@meddit.fr` / `Mdp1234!`
+3. 🚪 **Logout** (bouton en haut à droite)
+4. ✅ Vérifier que vous êtes déconnecté
+
+Le token JWT est automatiquement révoqué dans Redis ✅
+
+---
+
+## 🛑 Arrêter l'Application
+
+```powershell
+# Terminal 1 (Backend): Ctrl+C
+
+# Terminal 2 (Frontend): Ctrl+C
+
+# Arrêter Redis
+docker stop redis
+
+# Arrêter MySQL
+net stop MySQL80
+```
+
+---
+
+## 🐛 Troubleshooting Windows
+
+### ❌ "mvn: command not found"
+
+Utiliser `mvnw` à la place:
+
+```powershell
+# Au lieu de: mvn spring-boot:run
+# Taper:
+.\mvnw spring-boot:run
+```
+
+---
+
+### ❌ "npm not found"
+
+Node.js n'est pas installé:
+- 📥 Télécharger: https://nodejs.org/
+- ✅ Installer
+- 🔄 Redémarrer PowerShell
+- Vérifier: `node -v`
+
+---
+
+### ❌ "Can't connect to Redis"
+
+```powershell
+# Vérifier que Redis tourne
+docker ps | findstr redis
+
+# Si rien → Relancer Redis
+docker run -d -p 6379:6379 --name redis redis:latest
+
+# Si erreur "name already in use":
+docker rm redis
+docker run -d -p 6379:6379 --name redis redis:latest
+```
+
+---
+
+### ❌ "Can't connect to MySQL"
+
+```powershell
+# Vérifier que MySQL tourne
+net start MySQL80
+
+# Vérifier la connexion
+mysql -u root -p
+
+# Si erreur de mot de passe, vérifier .env
+```
+
+---
+
+### ❌ "Port 3306/6379 already in use"
+
+Quelque chose utilise déjà ce port:
+
+```powershell
+# Trouver le processus
+netstat -ano | findstr :6379
+
+# Tuer le processus (ajuster PID)
+taskkill /PID <numero> /F
+
+# Relancer
+docker run -d -p 6379:6379 --name redis redis:latest
+```
+
+---
+
+### ❌ "npm install very slow or fails"
+
+```powershell
+cd front
+npm cache clean --force
+npm install
+```
 
 ---
 
 ## 📂 Structure du Projet
 
 ```
-├── back/                    # Backend Spring Boot
+├── back/                          # Backend Spring Boot
 │   ├── src/main/java/
-│   │   ├── controller/      # REST API
-│   │   ├── service/         # Logique métier
-│   │   ├── model/           # Entités JPA
-│   │   ├── repository/       # Accès données
-│   │   ├── dto/             # Objets de transfert
-│   │   ├── exception/       # Gestion erreurs
-│   │   └── security/        # JWT, authentification
-│   └── pom.xml              # Dépendances Maven
+│   │   ├── controller/            # REST API
+│   │   ├── service/              # Logique métier
+│   │   ├── model/                # Entités JPA
+│   │   ├── repository/           # Accès données
+│   │   ├── dto/                  # Objets transfert
+│   │   ├── security/             # JWT, authentification
+│   │   └── configuration/        # Config Spring
+│   ├── .env.example             # Copier en .env
+│   ├── pom.xml
+│   └── mvnw.cmd
 │
-├── front/                   # Frontend Angular
+├── front/                         # Frontend Angular 14
 │   ├── src/
 │   │   ├── app/
-│   │   │   ├── features/    # Features (articles, topics, etc)
-│   │   │   ├── features/auth/   # Authentification
-│   │   │   ├── services/    # Services API
-│   │   │   ├── interceptors/ # JWT intercept
-│   │   │   └── guards/      # Route guards
+│   │   │   ├── features/        # Auth, Articles, Topics
+│   │   │   ├── services/        # API calls
+│   │   │   └── guards/          # Route guards
 │   │   └── assets/
-│   └── package.json         # Dépendances npm
+│   ├── package.json
+│   └── angular.json
+│
+└── SECURITY.md                     # Guide sécurité & tokens
 ```
 
 ---
 
-## 🔧 Fonctionnalités Principales
+## 🔐 Sécurité
+
+### Secrets Management
+
+- ✅ JWT Secret en variable d'env (`.env`)
+- ✅ DB password en variable d'env
+- ✅ `.env` dans `.gitignore` (jamais commité)
+- ✅ Production: variables d'env du serveur
+
+**Ne jamais committer `.env` ou clés privées en Git!**
+
+### Profils d'Application
+
+- **dev** (`application-dev.properties`): Logs DEBUG, DDL update
+- **prod** (`application-prod.properties`): Logs WARNING, DDL validate
+
+Lancer en dev:
+```powershell
+$env:SPRING_PROFILES_ACTIVE = "dev"
+```
+
+---
+
+## 🚀 Fonctionnalités
 
 ### Backend
-- ✅ **Authentification JWT** - Login/Register avec tokens
-- ✅ **Gestion Articles** - Créer, lire, filtrer
-- ✅ **Gestion Topics** - Catégories d'articles
-- ✅ **Abonnements** - Users s'abonnent à des topics
-- ✅ **Commentaires** - Commentaires sur articles
-- ✅ **Documentation OpenAPI/Swagger** - Swagger UI sur `/swagger-ui.html`
+- ✅ **Authentification JWT** - Login/Register
+- ✅ **Token Blacklist** - Logout sécurisé (Redis)
+- ✅ **Articles** - Créer, lire, commenter
+- ✅ **Topics** - Catégories d'articles
+- ✅ **Abonnements** - S'abonner aux topics
+- ✅ **Swagger UI** - Documentation API interactive
 
 ### Frontend
 - ✅ **Pages** - Home, Articles, Topics, Profile
-- ✅ **Authentification** - Login/Register
-- ✅ **Souscription** - S'abonner/désabonner à des topics
-- ✅ **Responsive** - Angular Material design
+- ✅ **Authentification** - Login/Register/Logout
+- ✅ **Souscription** - S'abonner aux topics
+- ✅ **Design Responsive** - Angular Material
 
 ---
 
-## 📡 API - Endpoints Principaux
+## ✅ Checklist de Démarrage
 
-### Authentification
-```bash
-POST   /api/auth/register        # Créer un compte
-POST   /api/auth/login          # Se connecter
-GET    /api/auth/me             # Info utilisateur actuel
-```
+- [ ] Docker Desktop installé et lancé
+- [ ] `docker run -d -p 6379:6379 --name redis redis:latest` ✅
+- [ ] `docker exec redis redis-cli ping` → `PONG`
+- [ ] MySQL en cours d'exécution (`net start MySQL80`)
+- [ ] `.env` créé dans `back/`
+- [ ] `mvn spring-boot:run` → "Started MddApiApplication"
+- [ ] `npm start` dans `front/` → http://localhost:4200
+- [ ] Login/Logout fonctionnent
 
-### Users
-```bash
-GET    /api/users/{id}          # Récupérer un user
-PUT    /api/users/me            # Modifier profil
-```
-
-### Articles
-```bash
-GET    /api/articles            # Articles abonnés (filtrés)
-GET    /api/articles/{id}       # Détail d'un article
-POST   /api/articles            # Créer un article
-```
-
-### Topics
-```bash
-GET    /api/topics              # Liste tous les topics
-GET    /api/topics/{id}         # Détail d'un topic
-```
-
-### Abonnements
-```bash
-GET    /api/subscriptions       # Topics abonnés
-POST   /api/subscriptions/{id}  # S'abonner
-DELETE /api/subscriptions/{id}  # Se désabonner
-```
+Vous êtes prêt! 🎉
 
 ---
 
-## ⚠️ Gestion des Erreurs
+## 🆘 Besoin d'Aide?
 
-L'API retourne des réponses d'erreur **structurées et cohérentes**.
-
-### ✅ Exemple: Réponse Normal (200)
-```bash
-curl http://localhost:8080/api/users/1
-```
-```json
-{
-  "id": 1,
-  "email": "user@test.com",
-  "firstName": "John",
-  "lastName": "Doe",
-  "admin": false
-}
-```
-
-### ❌ Exemple 1: Ressource Non Trouvée (404)
-
-```bash
-curl http://localhost:8080/api/users/999
-```
-
-**Réponse:**
-```json
-{
-  "timestamp": "2026-03-11T10:00:00",
-  "status": 404,
-  "error": "Not Found",
-  "message": "User not found with id: 999",
-  "path": "/api/users/999"
-}
-```
-
-**Raison:** L'utilisateur avec l'ID 999 n'existe pas.
+| Problème | Solution |
+|----------|----------|
+| Redis ne démarre | Voir "Troubleshooting" ci-dessus |
+| Backend échoue | Vérifier MySQL + Redis en cours d'exécution |
+| Frontend ne charge | Vérifier `npm start` dans le dossier `front/` |
+| Port en utilisation | Voir "Port already in use" ci-dessus |
 
 ---
 
-### ❌ Exemple 2: Validation Échouée (400)
+**Status**: ✅ Prêt à lancer!
+**Durée**: ~5-10 minutes
+**Difficultés**: Très facile (étapes simples)
 
-```bash
-curl http://localhost:8080/api/users/-5
-```
-
-**Réponse:**
-```json
-{
-  "timestamp": "2026-03-11T10:00:00",
-  "status": 400,
-  "error": "Argument Validation Failed",
-  "message": "The provided parameters are invalid",
-  "path": "/api/users/-5",
-  "validationErrors": {
-    "id": "ID must be greater than 0"
-  }
-}
-```
-
-**Raison:** L'ID doit être positif (validation Spring).
-
----
-
-### ❌ Exemple 3: Règle Métier Violée (409)
-
-```bash
-curl -X POST http://localhost:8080/api/auth/register \
-  -H "Content-Type: application/json" \
-  -d '{
-    "email": "existing@test.com",
-    "name": "John",
-    "password": "SecurePass123!"
-  }'
-```
-
-**Réponse** (si email existe déjà):
-```json
-{
-  "timestamp": "2026-03-11T10:00:00",
-  "status": 409,
-  "error": "Business Rule Violation",
-  "message": "An account already exists with this email",
-  "path": "/api/auth/register",
-  "errorCode": "EMAIL_ALREADY_EXISTS"
-}
-```
-
-**Raison:** Un utilisateur avec cet email existe déjà.
-
----
-
-### ❌ Exemple 4: Erreur d'Authentification (401)
-
-```bash
-curl -X POST http://localhost:8080/api/auth/login \
-  -H "Content-Type: application/json" \
-  -d '{"email": "test@test.com", "password": "bad"}'
-```
-
-**Réponse:**
-```json
-{
-  "timestamp": "2026-03-11T10:00:00",
-  "status": 401,
-  "error": "Authentication Failed",
-  "message": "Invalid credentials or expired session",
-  "path": "/api/auth/login"
-}
-```
-
-**Raison:** Email ou mot de passe incorrect.
-
----
-
-### ❌ Exemple 5: Erreur Serveur (500)
-
-```bash
-# Erreur inattendue côté serveur
-```
-
-**Réponse:**
-```json
-{
-  "timestamp": "2026-03-11T10:00:00",
-  "status": 500,
-  "error": "Internal Server Error",
-  "message": "An internal error occurred. Please contact support.",
-  "path": "/api/articles"
-}
-```
-
-**Raison:** Problem imprévu sur le serveur. Vérifiez les logs.
-
----
-
-## 📊 Résumé des Codes d'Erreur
-
-| Code | Nom | Cause | Solution |
-|------|-----|-------|----------|
-| **404** | Not Found | Ressource inexistante | Vérifiez l'ID |
-| **400** | Bad Request | Données invalides | Vérifiez les paramètres |
-| **409** | Conflict | Règle métier violée | Ex: email déjà utilisé |
-| **401** | Unauthorized | Auth manquante/invalide | Connectez-vous avec JWT |
-| **500** | Server Error | Erreur serveur | Vérifiez les logs |
-
----
-
-## 🧪 Tester l'API
-
-### Avec cURL
-```bash
-# Créer un utilisateur
-curl -X POST http://localhost:8080/api/auth/register \
-  -H "Content-Type: application/json" \
-  -d '{"email":"test@test.com","name":"Test","password":"SecurePass123!"}'
-
-# Récupérer tous les topics
-curl http://localhost:8080/api/topics
-```
-
-### Avec Postman ou Swagger
-Accédez à http://localhost:8080/swagger-ui.html pour une interface interactive.
-
----
-
-## 🔐 Authentification JWT
-
-1. **Login** → Recevez un `token`
-2. **Envoyez le token** dans chaque requête :
-   ```
-   Authorization: Bearer YOUR_TOKEN_HERE
-   ```
-3. **Token valide 24h** (configurable)
-
-**Exemple:**
-```bash
-curl http://localhost:8080/api/auth/me \
-  -H "Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5..."
-```
-
----
-
-## 📚 Documentation Complète
-
-Pour des explications avancées sur :
-- Exception patterns avancés
-- Tests unitaires
-- Déploiement en production
-- Architecture SOLID
-
-Voir les dossiers `docs/` ou les fichiers `.md` archivés.
-
----
-
-## ⚙️ Configuration
-
-### Backend (application.properties)
-
-```properties
-server.port=8080                        # Port serveur
-spring.datasource.url=jdbc:mysql://...  # Base de données
-spring.jpa.hibernate.ddl-auto=update     # Auto-créer tables
-jwt.expiration-ms=86400000               # Token valide 24h
-```
-
-### Frontend (environment.ts)
-
-```typescript
-export const environment = {
-  production: false,
-  apiUrl: 'http://localhost:8080'  // URL du backend
-};
-```
-
----
-
-## 🐛 Dépannage
-
-### Backend ne démarre pas?
-```bash
-# Check Java version
-java -version
-
-# Check MySQL est lancé
-# Vérifiez les variables d'environnement
-$env:DB_USERNAME
-$env:DB_PASSWORD
-```
-
-### Frontend ne se connecte pas?
-```bash
-# Vérifiez que le backend démarre sur le port 8080
-curl http://localhost:8080/swagger-ui.html
-
-# Vérifiez le proxy.conf.json du frontend
-```
-
-### Base de données vide?
-```sql
--- Connectez-vous à MySQL et vérifiez
-USE mdd;
-SHOW TABLES;
-```
-
----
-
-## 🎯 Prochaines Étapes
-
-1. ✅ Clone/Fork le repo
-2. ✅ Configure les variables d'environnement
-3. ✅ Démarre le backend
-4. ✅ Démarre le frontend
-5. ✅ Test l'API sur Swagger UI
-6. ✅ Modifie le code et développe!
-
----
-
-## 📞 Support
-
-Pour les erreurs, vérifiez:
-1. **Logs backend** - Console Maven
-2. **Logs frontend** - Console navigateur (F12)
-3. **Swagger UI** - http://localhost:8080/swagger-ui.html
-4. **Fichiers de config** - `application.properties`, `environment.ts`
-
----
-
-**Bonne chance! 🚀**
+Lancez-vous! 🚀

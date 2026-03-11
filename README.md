@@ -17,27 +17,74 @@ Créez une base de données MySQL :
 CREATE DATABASE mdd;
 ```
 
-### 2️⃣ Variables d'Environnement
+### 2️⃣ Configuration des Secrets
 
-Avant de lancer le backend, définissez les variables d'environnement (PowerShell):
+#### Option A : Variables d'Environnement (Recommandé ✅)
 
+**PowerShell:**
 ```powershell
-$env:DB_USERNAME="root"              # Votre utilisateur MySQL
-$env:DB_PASSWORD="password"          # Votre mot de passe MySQL
-$env:JWT_SECRET="your-secret-key-must-be-at-least-32-characters-long-for-hs256-algorithm"
+# Generate a secure JWT secret (minimum 32 characters)
+# Using OpenSSL: openssl rand -hex 32
+# Or online: https://www.uuidgenerator.net/
+
+$env:DB_USERNAME="root"
+$env:DB_PASSWORD="your_mysql_password"
+$env:JWT_SECRET="your_secure_jwt_secret_at_least_32_characters"
 ```
 
-**Ou** créez un fichier `back/.env` :
+**Bash/Linux:**
+```bash
+export DB_USERNAME="root"
+export DB_PASSWORD="your_mysql_password"
+export JWT_SECRET="your_secure_jwt_secret_at_least_32_characters"
+```
+
+#### Option B : Fichier .env (Développement Local)
+
+1. Copier le fichier d'exemple:
+```bash
+cd back
+cp .env.example .env
+```
+
+2. Éditer `back/.env` avec vos valeurs:
 ```
 DB_USERNAME=root
-DB_PASSWORD=password
-JWT_SECRET=your-secret-key-must-be-at-least-32-characters-long-for-hs256-algorithm
+DB_PASSWORD=your_mysql_password
+JWT_SECRET=your_secure_jwt_secret_at_least_32_characters
+```
+
+⚠️ **IMPORTANT**: 
+- **JAMAIS** committer le fichier `.env` en version control
+- Chaque développeur doit créer son propre `.env`
+- Le `.env` est listé dans `.gitignore`
+
+#### Générer une Clé JWT Sécurisée
+
+```bash
+# Avec OpenSSL (recommandé)
+openssl rand -hex 32
+
+# Ou utiliser un générateur UUID
+# https://www.uuidgenerator.net/
+```
+
+Exemple de clé sécurisée (32+ caractères):
+```
+a1b2c3d4e5f6g7h8i9j0k1l2m3n4o5p6q7r8s9t0u1v2w3x4y5z6a7b8c9d0e1f2
 ```
 
 ### 3️⃣ Lancer le Backend
 
 ```bash
 cd back
+
+# Development (avec clé JWT de dev)
+export SPRING_PROFILES_ACTIVE=dev
+mvn spring-boot:run
+
+# Production (REQUIRES environment variables)
+export SPRING_PROFILES_ACTIVE=prod
 mvn spring-boot:run
 ```
 
@@ -52,6 +99,41 @@ ng serve
 ```
 
 ✅ L'app démarre sur `http://localhost:4200`
+
+---
+
+## 🔐 Sécurité des Secrets
+
+### Development vs Production
+
+| Aspect | Development | Production |
+|--------|-------------|-----------|
+| JWT Secret | Valeur par défaut de test | Variable d'environnement OBLIGATOIRE |
+| DB Password | Peut être simple | Variable d'environnement sécurisée |
+| DDL Auto | `update` (crée tables) | `validate` (vérifie seulement) |
+| Show SQL | `true` | `false` |
+| Swagger | Activé | Désactivé |
+| Logging | DEBUG | INFO/WARN |
+
+### Fichiers de Configuration
+
+- `application.properties` - Configuration commune
+- `application-dev.properties` - Configuration développement (git)
+- `application-prod.properties` - Configuration production (git)
+
+Pour activer un profil:
+```bash
+export SPRING_PROFILES_ACTIVE=dev   # ou prod
+```
+
+### Bonnes Pratiques 🛡️
+
+1. ✅ **JAMAIS** de secrets en dur dans le code
+2. ✅ **JAMAIS** de secrets dans Git
+3. ✅ Utiliser des **variables d'environnement** en production
+4. ✅ Générer une **clé JWT unique** pour chaque environnement
+5. ✅ Utiliser `application-prod.properties` sans valeurs par défaut sensibles
+6. ✅ Ajouter `.env` à `.gitignore`
 
 ---
 

@@ -8,27 +8,30 @@ import java.util.List;
 import java.util.Optional;
 
 /**
- * Repository pour l'entité Article.
- * Utilise uniquement les méthodes simples de Spring Data JPA.
- * La logique de filtrage complexe est gérée au niveau du Service.
+ * Repository for the Article entity.
+ * Uses only simple Spring Data JPA methods.
+ * Complex filtering logic is handled at the Service level.
  */
 @Repository
 public interface ArticleRepository extends JpaRepository<Article, Long> {
     
     /**
-     * Récupère tous les articles.
+     * Retrieves all articles.
      */
     @Override
     List<Article> findAll();
     
     /**
-     * Récupère un article par son ID.
+     * Retrieves an article by its ID.
      */
     @Override
     Optional<Article> findById(Long id);
     
     /**
-     * Récupère les articles créés par un utilisateur.
+     * Retrieves articles created by a specific user.
+     * 
+     * @param userId the user ID
+     * @return list of articles created by the user
      */
     List<Article> findByUserId(Long userId);
 }

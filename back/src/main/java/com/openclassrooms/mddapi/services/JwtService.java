@@ -17,6 +17,10 @@ import io.jsonwebtoken.UnsupportedJwtException;
 import io.jsonwebtoken.security.Keys;
 import io.jsonwebtoken.security.SignatureException;
 
+/**
+ * Service for JWT (JSON Web Token) generation and validation.
+ * Handles token creation, parsing, and authentication validation.
+ */
 @Service
 public class JwtService {
 
@@ -31,6 +35,12 @@ public class JwtService {
         return Keys.hmacShaKeyFor(keyBytes);
     }
 
+    /**
+     * Generates a JWT token from authentication information.
+     * 
+     * @param authentication the authentication object containing user info
+     * @return the generated JWT token
+     */
     public String generateToken(Authentication authentication) {
         String email = authentication.getName();
         Date now = new Date();
@@ -43,6 +53,12 @@ public class JwtService {
                 .compact();
     }
 
+    /**
+     * Extracts the user email from a JWT token.
+     * 
+     * @param token the JWT token
+     * @return the email address encoded in the token
+     */
     public String getEmailFromToken(String token) {
         Claims claims = Jwts.parserBuilder()
                 .setSigningKey(getSigningKey())
@@ -52,6 +68,12 @@ public class JwtService {
         return claims.getSubject();
     }
 
+    /**
+     * Validates a JWT token.
+     * 
+     * @param token the JWT token to validate
+     * @return true if valid, false otherwise
+     */
     public boolean validateToken(String token) {
         try {
             Jwts.parserBuilder()

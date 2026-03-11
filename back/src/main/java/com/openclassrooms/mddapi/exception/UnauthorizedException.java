@@ -1,8 +1,8 @@
 package com.openclassrooms.mddapi.exception;
 
 /**
- * Exception levée lors d'une tentative d'accès non autorisée.
- * Correspond à un statut HTTP 403 (Forbidden).
+ * Exception thrown when unauthorized access is attempted.
+ * Corresponds to HTTP status 403 (Forbidden).
  */
 public class UnauthorizedException extends RuntimeException {
     

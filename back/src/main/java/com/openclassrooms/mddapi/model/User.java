@@ -3,6 +3,10 @@ package com.openclassrooms.mddapi.model;
 import javax.persistence.*;
 import java.time.LocalDateTime;
 
+/**
+ * User entity representing a user account.
+ * Stores user authentication and profile information.
+ */
 @Entity
 @Table(name = "USERS")
 public class User {

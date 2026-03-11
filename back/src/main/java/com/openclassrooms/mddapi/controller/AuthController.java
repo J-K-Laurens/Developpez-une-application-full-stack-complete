@@ -17,6 +17,10 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 
+/**
+ * REST Controller for authentication-related endpoints.
+ * Handles user login, registration, and current user info retrieval.
+ */
 @RestController
 @RequestMapping("/api/auth")
 @Validated
@@ -33,10 +37,11 @@ public class AuthController {
     }
 
     /**
-     * Authentifie un utilisateur et retourne un token JWT.
-     * @param request Les identifiants de connexion
-     * @return Un token JWT pour les requêtes ultérieures
-     * @throws BadCredentialsException si les identifiants sont incorrects
+     * Authenticates a user and returns a JWT token.
+     * 
+     * @param request the login credentials
+     * @return a JWT token for subsequent requests
+     * @throws BadCredentialsException if credentials are incorrect
      */
     @PostMapping("/login")
     public ResponseEntity<AuthDto.TokenResponse> login(@Valid @RequestBody AuthDto.LoginRequest request) {
@@ -47,16 +52,17 @@ public class AuthController {
     }
 
     /**
-     * Enregistre un nouvel utilisateur.
-     * @param request Les données d'inscription
-     * @return Un token JWT pour les requêtes ultérieures
-     * @throws BusinessRuleException si un compte existe déjà avec cet email
+     * Registers a new user account.
+     * 
+     * @param request the registration data
+     * @return a JWT token for subsequent requests
+     * @throws BusinessRuleException if an account already exists with this email
      */
     @PostMapping("/register")
     public ResponseEntity<AuthDto.TokenResponse> register(@Valid @RequestBody AuthDto.RegisterRequest request) {
         userService.register(request.getEmail(), request.getName(), request.getPassword());
         
-        // Authentifier l'utilisateur après l'enregistrement
+        // Authenticate user after registration
         Authentication authentication = authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(request.getEmail(), request.getPassword()));
         String token = jwtService.generateToken(authentication);
@@ -64,8 +70,9 @@ public class AuthController {
     }
 
     /**
-     * Récupère les informations de l'utilisateur actuellement connecté.
-     * @return Les données de l'utilisateur
+     * Retrieves information about the currently authenticated user.
+     * 
+     * @return the user data
      */
     @GetMapping("/me")
     public ResponseEntity<UserDto.Response> getCurrentUser() {

@@ -1,8 +1,8 @@
 package com.openclassrooms.mddapi.exception;
 
 /**
- * Exception levée lors de violation des règles métier.
- * Correspond généralement à un statut HTTP 409 (Conflict).
+ * Exception thrown when a business rule is violated.
+ * Typically corresponds to HTTP status 409 (Conflict).
  */
 public class BusinessRuleException extends RuntimeException {
     

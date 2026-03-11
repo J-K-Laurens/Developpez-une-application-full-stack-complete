@@ -16,6 +16,10 @@ import javax.validation.Valid;
 import javax.validation.constraints.Min;
 import java.util.List;
 
+/**
+ * REST Controller for comment-related endpoints.
+ * Handles comment retrieval and creation on articles.
+ */
 @RestController
 @RequestMapping("/api/articles")
 @Validated
@@ -30,29 +34,32 @@ public class CommentController {
     }
 
     /**
-     * Récupère tous les commentaires d'un article.
-     * @param articleId L'ID de l'article
-     * @return Liste des commentaires de l'article
-     * @throws ResourceNotFoundException si l'article n'existe pas
+     * Retrieves all comments for an article.
+     * 
+     * @param articleId the article ID
+     * @return list of comments for the article
+     * @throws ResourceNotFoundException if article not found
      */
     @GetMapping("/{articleId}/comments")
-    public ResponseEntity<List<Comment>> getByArticleId(@PathVariable @Min(value = 1, message = "L'ID doit être supérieur à 0") Long articleId) {
+    public ResponseEntity<List<Comment>> getByArticleId(@PathVariable @Min(value = 1, message = "ID must be greater than 0") Long articleId) {
         return ResponseEntity.ok(commentService.findByArticleId(articleId));
     }
 
     /**
-     * Crée un nouveau commentaire sur un article.
-     * @param articleId L'ID de l'article
-     * @param request Les données du commentaire
-     * @return Le commentaire créé
-     * @throws ResourceNotFoundException si l'article ou l'utilisateur n'existe pas
+     * Creates a new comment on an article.
+     * The current authenticated user is set as the comment author.
+     * 
+     * @param articleId the article ID
+     * @param request the comment data
+     * @return the created comment
+     * @throws ResourceNotFoundException if article or user not found
      */
     @PostMapping("/{articleId}/comments")
-    public ResponseEntity<Comment> create(@PathVariable @Min(value = 1, message = "L'ID doit être supérieur à 0") Long articleId,
+    public ResponseEntity<Comment> create(@PathVariable @Min(value = 1, message = "ID must be greater than 0") Long articleId,
                                           @Valid @RequestBody CommentDto.Request request) {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         Long userId = userRepository.findByEmail(auth.getName())
-                .orElseThrow(() -> new ResourceNotFoundException("Utilisateur", "email", auth.getName()))
+                .orElseThrow(() -> new ResourceNotFoundException("User", "email", auth.getName()))
                 .getId();
 
         Comment comment = new Comment();

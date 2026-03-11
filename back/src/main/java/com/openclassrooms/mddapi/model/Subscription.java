@@ -3,6 +3,10 @@ package com.openclassrooms.mddapi.model;
 import javax.persistence.*;
 import java.time.LocalDateTime;
 
+/**
+ * Subscription entity representing a user's subscription to a topic.
+ * Associates users with topics they wish to follow.
+ */
 @Entity
 @Table(name = "SUBSCRIPTIONS")
 public class Subscription {

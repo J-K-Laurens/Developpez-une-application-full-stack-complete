@@ -8,8 +8,15 @@ import javax.validation.constraints.Email;
 import javax.validation.constraints.Size;
 import java.time.LocalDateTime;
 
+/**
+ * Data Transfer Object for User entities.
+ * Contains request and response classes for user-related API operations.
+ */
 public class UserDto {
 
+    /**
+     * Request DTO for user profile updates.
+     */
     @Data
     public static class Request {
         @Email
@@ -21,6 +28,9 @@ public class UserDto {
         private String password;
     }
 
+    /**
+     * Response DTO for user information.
+     */
     @Value
     public static class Response {
         Long id;

@@ -8,7 +8,7 @@ import org.springframework.stereotype.Repository;
 import com.openclassrooms.mddapi.model.User;
 
 /**
- * Accès aux données pour l'entité {@link User}.
+ * Repository for accessing User entity data.
  */
 @Repository
 public interface UserRepository extends JpaRepository<User, Long> {

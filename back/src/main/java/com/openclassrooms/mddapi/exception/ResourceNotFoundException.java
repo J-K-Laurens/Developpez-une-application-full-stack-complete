@@ -1,8 +1,8 @@
 package com.openclassrooms.mddapi.exception;
 
 /**
- * Exception levée quand une ressource n'est pas trouvée.
- * Correspond à un statut HTTP 404.
+ * Exception thrown when a resource is not found.
+ * Corresponds to HTTP status 404.
  */
 public class ResourceNotFoundException extends RuntimeException {
     
@@ -16,7 +16,7 @@ public class ResourceNotFoundException extends RuntimeException {
     }
 
     public ResourceNotFoundException(String resourceName, String fieldName, Object fieldValue) {
-        super(String.format("%s non trouvé(e) avec %s: %s", resourceName, fieldName, fieldValue));
+        super(String.format("%s not found with %s: %s", resourceName, fieldName, fieldValue));
         this.resourceName = resourceName;
         this.fieldName = fieldName;
         this.fieldValue = fieldValue;

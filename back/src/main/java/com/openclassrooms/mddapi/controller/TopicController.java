@@ -12,6 +12,10 @@ import javax.validation.Valid;
 import javax.validation.constraints.Min;
 import java.util.List;
 
+/**
+ * REST Controller for topic-related endpoints.
+ * Handles topic retrieval and creation.
+ */
 @RestController
 @RequestMapping("/api/topics")
 @Validated
@@ -24,8 +28,9 @@ public class TopicController {
     }
 
     /**
-     * Récupère tous les topics disponibles.
-     * @return Liste de tous les topics
+     * Retrieves all available topics.
+     * 
+     * @return list of all topics
      */
     @GetMapping
     public ResponseEntity<List<Topic>> listAll() {
@@ -33,13 +38,14 @@ public class TopicController {
     }
 
     /**
-     * Récupère un topic par son ID.
-     * @param id L'ID du topic
-     * @return Le topic demandé
-     * @throws ResourceNotFoundException si le topic n'existe pas
+     * Retrieves a topic by its ID.
+     * 
+     * @param id the topic ID
+     * @return the requested topic
+     * @throws ResourceNotFoundException if topic not found
      */
     @GetMapping("/{id}")
-    public ResponseEntity<Topic> getById(@PathVariable @Min(value = 1, message = "L'ID doit être supérieur à 0") Long id) {
+    public ResponseEntity<Topic> getById(@PathVariable @Min(value = 1, message = "ID must be greater than 0") Long id) {
         Topic topic = topicService.findById(id);
         if (topic == null) {
             throw new ResourceNotFoundException("Topic", "id", id);
@@ -48,9 +54,10 @@ public class TopicController {
     }
 
     /**
-     * Crée un nouveau topic.
-     * @param topic Les données du topic à créer
-     * @return Le topic créé
+     * Creates a new topic.
+     * 
+     * @param topic the topic data to create
+     * @return the created topic
      */
     @PostMapping
     public ResponseEntity<Topic> create(@Valid @RequestBody Topic topic) {

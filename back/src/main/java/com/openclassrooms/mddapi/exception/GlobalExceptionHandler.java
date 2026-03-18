@@ -17,22 +17,26 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * Gestionnaire global des exceptions pour l'API.
- * Centralise la gestion des erreurs et standardise les réponses.
+ * Global exception handler for the API.
+ * Centralizes error handling and standardizes error responses.
  */
-@ControllerAdvice // Permet de gérer les exceptions à l'échelle de l'application
+@ControllerAdvice // Handles exceptions at the application level
 public class GlobalExceptionHandler {
     
     private static final Logger logger = LoggerFactory.getLogger(GlobalExceptionHandler.class);
 
     /**
-     * Gère les ResourceNotFoundException (404 Not Found)
+     * Handles ResourceNotFoundException (404 Not Found).
+     * 
+     * @param ex the exception
+     * @param request the HTTP request
+     * @return error response with 404 status
      */
     @ExceptionHandler(ResourceNotFoundException.class)
     public ResponseEntity<ErrorResponse> handleResourceNotFound(
             ResourceNotFoundException ex, 
             HttpServletRequest request) {
-        logger.warn("Ressource non trouvée: {}", ex.getMessage());
+        logger.warn("Resource not found: {}", ex.getMessage());
         
         ErrorResponse error = new ErrorResponse(
                 HttpStatus.NOT_FOUND.value(),
@@ -45,13 +49,17 @@ public class GlobalExceptionHandler {
     }
 
     /**
-     * Gère les ValidationException (400 Bad Request)
+     * Handles ValidationException (400 Bad Request).
+     * 
+     * @param ex the exception
+     * @param request the HTTP request
+     * @return error response with 400 status
      */
     @ExceptionHandler(ValidationException.class)
     public ResponseEntity<ErrorResponse> handleValidationException(
             ValidationException ex, 
             HttpServletRequest request) {
-        logger.warn("Erreur de validation: {}", ex.getMessage());
+        logger.warn("Validation error: {}", ex.getMessage());
         
         ErrorResponse error = new ErrorResponse(
                 HttpStatus.BAD_REQUEST.value(),
@@ -65,13 +73,17 @@ public class GlobalExceptionHandler {
     }
 
     /**
-     * Gère les BusinessRuleException (409 Conflict)
+     * Handles BusinessRuleException (409 Conflict).
+     * 
+     * @param ex the exception
+     * @param request the HTTP request
+     * @return error response with 409 status
      */
     @ExceptionHandler(BusinessRuleException.class)
     public ResponseEntity<ErrorResponse> handleBusinessRuleException(
             BusinessRuleException ex, 
             HttpServletRequest request) {
-        logger.warn("Violation de règle métier: {} [{}]", ex.getMessage(), ex.getErrorCode());
+        logger.warn("Business rule violation: {} [{}]", ex.getMessage(), ex.getErrorCode());
         
         ErrorResponse error = new ErrorResponse(
                 HttpStatus.CONFLICT.value(),
@@ -85,13 +97,17 @@ public class GlobalExceptionHandler {
     }
 
     /**
-     * Gère les UnauthorizedException (403 Forbidden)
+     * Handles UnauthorizedException (403 Forbidden).
+     * 
+     * @param ex the exception
+     * @param request the HTTP request
+     * @return error response with 403 status
      */
     @ExceptionHandler(UnauthorizedException.class)
     public ResponseEntity<ErrorResponse> handleUnauthorizedException(
             UnauthorizedException ex, 
             HttpServletRequest request) {
-        logger.warn("Accès non autorisé: {} [Resource: {}, Action: {}]", 
+        logger.warn("Unauthorized access: {} [Resource: {}, Action: {}]", 
                 ex.getMessage(), ex.getResource(), ex.getAction());
         
         ErrorResponse error = new ErrorResponse(
@@ -105,14 +121,18 @@ public class GlobalExceptionHandler {
     }
 
     /**
-     * Gère les erreurs de validation des arguments de méthode (400 Bad Request)
-     * Utilisé pour @Valid et les contraintes de validation JSR303/JSR380
+     * Handles method argument validation errors (400 Bad Request).
+     * Used for @Valid and JSR303/JSR380 validation constraints.
+     * 
+     * @param ex the exception
+     * @param request the HTTP request
+     * @return error response with 400 status
      */
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<ErrorResponse> handleMethodArgumentNotValid(
             MethodArgumentNotValidException ex, 
             HttpServletRequest request) {
-        logger.warn("Erreur de validation d'argument: {}", ex.getMessage());
+        logger.warn("Argument validation error: {}", ex.getMessage());
         
         Map<String, String> errors = new HashMap<>();
         ex.getBindingResult().getFieldErrors().forEach(error ->
@@ -122,7 +142,7 @@ public class GlobalExceptionHandler {
         ErrorResponse errorResponse = new ErrorResponse(
                 HttpStatus.BAD_REQUEST.value(),
                 "Argument Validation Failed",
-                "Les paramètres fournis sont invalides",
+                "The provided parameters are invalid",
                 request.getRequestURI(),
                 errors
         );
@@ -131,18 +151,22 @@ public class GlobalExceptionHandler {
     }
 
     /**
-     * Gère les erreurs d'authentification
+     * Handles authentication errors.
+     * 
+     * @param ex the exception
+     * @param request the HTTP request
+     * @return error response with 401 status
      */
     @ExceptionHandler(AuthenticationException.class)
     public ResponseEntity<ErrorResponse> handleAuthenticationException(
             AuthenticationException ex, 
             HttpServletRequest request) {
-        logger.warn("Erreur d'authentification: {}", ex.getMessage());
+        logger.warn("Authentication error: {}", ex.getMessage());
         
         ErrorResponse error = new ErrorResponse(
                 HttpStatus.UNAUTHORIZED.value(),
                 "Authentication Failed",
-                "Identifiants invalides ou session expirée",
+                "Invalid credentials or expired session",
                 request.getRequestURI()
         );
         
@@ -150,19 +174,23 @@ public class GlobalExceptionHandler {
     }
 
     /**
-     * Gère les exceptions non gérées (500 Internal Server Error)
-     * À utiliser en dernier recours
+     * Handles unhandled exceptions (500 Internal Server Error).
+     * Used as a last resort.
+     * 
+     * @param ex the exception
+     * @param request the HTTP request
+     * @return error response with 500 status
      */
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ErrorResponse> handleGenericException(
             Exception ex, 
             HttpServletRequest request) {
-        logger.error("Exception non gérée", ex);
+        logger.error("Unhandled exception", ex);
         
         ErrorResponse error = new ErrorResponse(
                 HttpStatus.INTERNAL_SERVER_ERROR.value(),
                 HttpStatus.INTERNAL_SERVER_ERROR.getReasonPhrase(),
-                "Une erreur interne s'est produite. Veuillez contacter le support.",
+                "An internal error occurred. Please contact support.",
                 request.getRequestURI()
         );
         

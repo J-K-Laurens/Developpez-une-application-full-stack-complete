@@ -3,6 +3,10 @@ package com.openclassrooms.mddapi.model;
 import javax.persistence.*;
 import java.time.LocalDateTime;
 
+/**
+ * Topic entity representing a topic or category.
+ * Articles can be associated with multiple topics.
+ */
 @Entity
 @Table(name = "TOPICS")
 public class Topic {

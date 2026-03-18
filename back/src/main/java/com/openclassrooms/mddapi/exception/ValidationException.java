@@ -4,8 +4,8 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * Exception levée lors d'erreurs de validation métier.
- * Correspond généralement à un statut HTTP 400.
+ * Exception thrown when business validation errors occur.
+ * Typically corresponds to HTTP status 400.
  */
 public class ValidationException extends RuntimeException {
     

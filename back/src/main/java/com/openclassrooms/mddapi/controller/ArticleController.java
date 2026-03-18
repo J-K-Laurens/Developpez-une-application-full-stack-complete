@@ -20,6 +20,10 @@ import javax.validation.Valid;
 import javax.validation.constraints.Min;
 import java.util.List;
 
+/**
+ * REST Controller for article-related endpoints.
+ * Handles article retrieval, creation, and topic associations.
+ */
 @RestController
 @RequestMapping("/api/articles")
 @Validated
@@ -40,27 +44,29 @@ public class ArticleController {
     }
 
     /**
-     * Récupère tous les articles auxquels l'utilisateur connecté est abonné.
-     * @return List des articles filtrés
-     * @throws ResourceNotFoundException si l'utilisateur n'existe pas
+     * Retrieves all articles to which the authenticated user is subscribed.
+     * 
+     * @return list of filtered articles
+     * @throws ResourceNotFoundException if user not found
      */
     @GetMapping
     public ResponseEntity<List<ArticleDto.ListItem>> listAll() {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         Long userId = userRepository.findByEmail(auth.getName())
-                .orElseThrow(() -> new ResourceNotFoundException("Utilisateur", "email", auth.getName()))
+                .orElseThrow(() -> new ResourceNotFoundException("User", "email", auth.getName()))
                 .getId();
         return ResponseEntity.ok(articleService.findListByUserSubscriptions(userId));
     }
 
     /**
-     * Récupère un article par son ID.
-     * @param id L'ID de l'article
-     * @return L'article demandé
-     * @throws ResourceNotFoundException si l'article n'existe pas
+     * Retrieves an article by its ID.
+     * 
+     * @param id the article ID
+     * @return the requested article
+     * @throws ResourceNotFoundException if article not found
      */
     @GetMapping("/{id}")
-    public ResponseEntity<Article> getById(@PathVariable @Min(value = 1, message = "L'ID doit être supérieur à 0") Long id) {
+    public ResponseEntity<Article> getById(@PathVariable @Min(value = 1, message = "ID must be greater than 0") Long id) {
         Article article = articleService.findById(id);
         if (article == null) {
             throw new ResourceNotFoundException("Article", "id", id);
@@ -69,20 +75,22 @@ public class ArticleController {
     }
 
     /**
-     * Récupère les détails complets d'un article.
-     * @param id L'ID de l'article
-     * @return Les détails complets de l'article
-     * @throws ResourceNotFoundException si l'article n'existe pas
+     * Retrieves the complete details of an article.
+     * 
+     * @param id the article ID
+     * @return the complete article details
+     * @throws ResourceNotFoundException if article not found
      */
     @GetMapping("/{id}/full")
-    public ResponseEntity<ArticleDto.Detail> getFull(@PathVariable @Min(value = 1, message = "L'ID doit être supérieur à 0") Long id) {
+    public ResponseEntity<ArticleDto.Detail> getFull(@PathVariable @Min(value = 1, message = "ID must be greater than 0") Long id) {
         return ResponseEntity.ok(articleService.findFull(id));
     }
 
     /**
-     * Crée un nouvel article.
-     * @param article L'article à créer
-     * @return L'article créé
+     * Creates a new article.
+     * 
+     * @param article the article to create
+     * @return the created article
      */
     @PostMapping
     public ResponseEntity<Article> create(@Valid @RequestBody Article article) {
@@ -90,13 +98,14 @@ public class ArticleController {
     }
 
     /**
-     * Récupère tous les topics associés à un article.
-     * @param articleId L'ID de l'article
-     * @return Liste des topics
-     * @throws ResourceNotFoundException si l'article n'existe pas
+     * Retrieves all topics associated with an article.
+     * 
+     * @param articleId the article ID
+     * @return list of topics
+     * @throws ResourceNotFoundException if article not found
      */
     @GetMapping("/{articleId}/topics")
-    public ResponseEntity<List<Topic>> getTopicsByArticleId(@PathVariable @Min(value = 1, message = "L'ID doit être supérieur à 0") Long articleId) {
+    public ResponseEntity<List<Topic>> getTopicsByArticleId(@PathVariable @Min(value = 1, message = "ID must be greater than 0") Long articleId) {
         return ResponseEntity.ok(topicService.findByArticleId(articleId));
     }
 

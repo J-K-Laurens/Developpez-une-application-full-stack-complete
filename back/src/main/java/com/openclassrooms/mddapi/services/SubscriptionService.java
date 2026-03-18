@@ -13,6 +13,10 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 import java.util.stream.Collectors;
 
+/**
+ * Service for managing user topic subscriptions.
+ * Handles subscription creation, deletion, and subscription retrieval.
+ */
 @Service
 public class SubscriptionService {
 
@@ -28,6 +32,12 @@ public class SubscriptionService {
         this.userRepository = userRepository;
     }
 
+    /**
+     * Retrieves all topics a user is subscribed to.
+     * 
+     * @param email the user's email address
+     * @return list of subscribed topics
+     */
     public List<Topic> getSubscribedTopics(String email) {
         Long userId = getUserIdByEmail(email);
         return subscriptionRepository.findByUserId(userId).stream()
@@ -37,13 +47,21 @@ public class SubscriptionService {
                 .collect(Collectors.toList());
     }
 
+    /**
+     * Subscribes a user to a specific topic.
+     * 
+     * @param email the user's email address
+     * @param topicId the topic ID to subscribe to
+     * @throws ResourceNotFoundException if topic not found or user not found
+     * @throws BusinessRuleException if user is already subscribed to the topic
+     */
     public void subscribe(String email, Long topicId) {
         Long userId = getUserIdByEmail(email);
         if (!topicRepository.existsById(topicId)) {
             throw new ResourceNotFoundException("Topic", "id", topicId);
         }
         if (subscriptionRepository.existsByUserIdAndTopicId(userId, topicId)) {
-            throw new BusinessRuleException("Déjà abonné à ce thème", "ALREADY_SUBSCRIBED");
+            throw new BusinessRuleException("Already subscribed to this topic", "ALREADY_SUBSCRIBED");
         }
         Subscription sub = new Subscription();
         sub.setUserId(userId);
@@ -51,18 +69,25 @@ public class SubscriptionService {
         subscriptionRepository.save(sub);
     }
 
+    /**
+     * Unsubscribes a user from a specific topic.
+     * 
+     * @param email the user's email address
+     * @param topicId the topic ID to unsubscribe from
+     * @throws ResourceNotFoundException if subscription not found
+     */
     @Transactional
     public void unsubscribe(String email, Long topicId) {
         Long userId = getUserIdByEmail(email);
         if (!subscriptionRepository.existsByUserIdAndTopicId(userId, topicId)) {
-            throw new ResourceNotFoundException("Abonnement", "userId", userId);
+            throw new ResourceNotFoundException("Subscription", "userId", userId);
         }
         subscriptionRepository.deleteByUserIdAndTopicId(userId, topicId);
     }
 
     private Long getUserIdByEmail(String email) {
         return userRepository.findByEmail(email)
-                .orElseThrow(() -> new ResourceNotFoundException("Utilisateur", "email", email))
+                .orElseThrow(() -> new ResourceNotFoundException("User", "email", email))
                 .getId();
     }
 }

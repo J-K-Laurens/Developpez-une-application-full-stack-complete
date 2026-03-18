@@ -10,6 +10,10 @@ import com.openclassrooms.mddapi.validation.PasswordValidator;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+/**
+ * Service for managing user-related business logic.
+ * Handles user retrieval, registration, and profile updates.
+ */
 @Service
 public class UserService {
 
@@ -21,21 +25,46 @@ public class UserService {
         this.passwordEncoder = passwordEncoder;
     }
 
+    /**
+     * Retrieves a user by their ID.
+     * 
+     * @param id the user ID
+     * @return the user response DTO
+     * @throws ResourceNotFoundException if user not found
+     */
     public UserDto.Response getUserById(Long id) {
         return userRepository.findById(id)
                 .map(UserDto.Response::fromEntity)
-                .orElseThrow(() -> new ResourceNotFoundException("Utilisateur", "id", id));
+                .orElseThrow(() -> new ResourceNotFoundException("User", "id", id));
     }
 
+    /**
+     * Retrieves a user by their email address.
+     * 
+     * @param email the user email
+     * @return the user response DTO
+     * @throws ResourceNotFoundException if user not found
+     */
     public UserDto.Response getUserByEmail(String email) {
         return userRepository.findByEmail(email)
                 .map(UserDto.Response::fromEntity)
-                .orElseThrow(() -> new ResourceNotFoundException("Utilisateur", "email", email));
+                .orElseThrow(() -> new ResourceNotFoundException("User", "email", email));
     }
 
+    /**
+     * Updates a user's profile information.
+     * Validates email uniqueness and password strength.
+     * 
+     * @param currentEmail the user's current email
+     * @param request the update request with new user data
+     * @return the updated user response DTO
+     * @throws ResourceNotFoundException if user not found
+     * @throws BusinessRuleException if email already exists
+     * @throws ValidationException if password is invalid
+     */
     public UserDto.Response updateUser(String currentEmail, UserDto.Request request) {
         User user = userRepository.findByEmail(currentEmail)
-                .orElseThrow(() -> new ResourceNotFoundException("Utilisateur", "email", currentEmail));
+                .orElseThrow(() -> new ResourceNotFoundException("User", "email", currentEmail));
 
         if (request.getFirstName() != null && !request.getFirstName().isBlank()) {
             user.setFirstName(request.getFirstName());
@@ -59,6 +88,16 @@ public class UserService {
         return UserDto.Response.fromEntity(userRepository.save(user));
     }
 
+    /**
+     * Registers a new user account.
+     * Validates email uniqueness and password strength.
+     * 
+     * @param email the user's email address
+     * @param name the user's first name
+     * @param rawPassword the user's raw password (will be encoded)
+     * @throws BusinessRuleException if email already exists
+     * @throws ValidationException if password is invalid
+     */
     public void register(String email, String name, String rawPassword) {
         if (userRepository.existsByEmail(email)) {
             throw new BusinessRuleException("Un compte existe déjà avec cet email", "EMAIL_ALREADY_EXISTS");

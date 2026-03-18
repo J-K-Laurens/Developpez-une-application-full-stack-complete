@@ -3,6 +3,10 @@ package com.openclassrooms.mddapi.model;
 import javax.persistence.*;
 import java.time.LocalDateTime;
 
+/**
+ * TopicArticleRelation entity representing the association between topics and articles.
+ * Maps many-to-many relationship between topics and articles.
+ */
 @Entity
 @Table(name = "`TOPIC_&_ARTICLE_RELATIONS`")
 public class TopicArticleRelation {

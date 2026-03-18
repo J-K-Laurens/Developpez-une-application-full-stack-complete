@@ -4,6 +4,8 @@ import java.nio.charset.StandardCharsets;
 import java.security.Key;
 import java.util.Date;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
@@ -17,10 +19,16 @@ import io.jsonwebtoken.UnsupportedJwtException;
 import io.jsonwebtoken.security.Keys;
 import io.jsonwebtoken.security.SignatureException;
 
+/**
+ * Service for JWT (JSON Web Token) generation and validation.
+ * Handles token creation, parsing, and authentication validation.
+ */
 @Service
 public class JwtService {
 
-    @Value("${jwt.secret:your-secret-key-must-be-at-least-32-characters-long-for-hs256-algorithm}")
+    private static final Logger logger = LoggerFactory.getLogger(JwtService.class);
+
+    @Value("${jwt.secret}")
     private String jwtSecret;
 
     @Value("${jwt.expiration-ms:86400000}")
@@ -31,6 +39,12 @@ public class JwtService {
         return Keys.hmacShaKeyFor(keyBytes);
     }
 
+    /**
+     * Generates a JWT token from authentication information.
+     * 
+     * @param authentication the authentication object containing user info
+     * @return the generated JWT token
+     */
     public String generateToken(Authentication authentication) {
         String email = authentication.getName();
         Date now = new Date();
@@ -43,6 +57,12 @@ public class JwtService {
                 .compact();
     }
 
+    /**
+     * Extracts the user email from a JWT token.
+     * 
+     * @param token the JWT token
+     * @return the email address encoded in the token
+     */
     public String getEmailFromToken(String token) {
         Claims claims = Jwts.parserBuilder()
                 .setSigningKey(getSigningKey())
@@ -52,6 +72,12 @@ public class JwtService {
         return claims.getSubject();
     }
 
+    /**
+     * Validates a JWT token.
+     * 
+     * @param token the JWT token to validate
+     * @return true if valid, false otherwise
+     */
     public boolean validateToken(String token) {
         try {
             Jwts.parserBuilder()
@@ -63,5 +89,21 @@ public class JwtService {
                 | UnsupportedJwtException | IllegalArgumentException e) {
             return false;
         }
+    }
+
+    /**
+     * Extracts all claims from a JWT token.
+     * Used by TokenBlacklistService to get expiration time.
+     * 
+     * @param token the JWT token
+     * @return the claims
+     * @throws Exception if token is invalid
+     */
+    public Claims extractAllClaims(String token) throws Exception {
+        return Jwts.parserBuilder()
+                .setSigningKey(getSigningKey())
+                .build()
+                .parseClaimsJws(token)
+                .getBody();
     }
 }

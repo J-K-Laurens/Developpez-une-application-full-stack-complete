@@ -12,6 +12,10 @@ import org.springframework.web.bind.annotation.*;
 import javax.validation.Valid;
 import javax.validation.constraints.Min;
 
+/**
+ * REST Controller for user-related endpoints.
+ * Handles user profile retrieval and updates.
+ */
 @RestController
 @RequestMapping("/api/users")
 @Validated
@@ -24,24 +28,26 @@ public class UserController {
     }
 
     /**
-     * Récupère un utilisateur par son ID.
-     * @param id L'ID de l'utilisateur (doit être >= 1)
-     * @return Les détails de l'utilisateur
-     * @throws ResourceNotFoundException si l'utilisateur n'existe pas
+     * Retrieves a user by their ID.
+     * 
+     * @param id the user ID (must be &gt;= 1)
+     * @return the user details
+     * @throws ResourceNotFoundException if user not found
      */
     @GetMapping("/{id}")
-    public ResponseEntity<UserDto.Response> getUserById(@PathVariable @Min(value = 1, message = "L'ID doit être supérieur à 0") Long id) {
+    public ResponseEntity<UserDto.Response> getUserById(@PathVariable @Min(value = 1, message = "ID must be greater than 0") Long id) {
         UserDto.Response user = userService.getUserById(id);
         if (user == null) {
-            throw new ResourceNotFoundException("Utilisateur", "id", id);
+            throw new ResourceNotFoundException("User", "id", id);
         }
         return ResponseEntity.ok(user);
     }
 
     /**
-     * Met à jour les informations de l'utilisateur connecté.
-     * @param request Les nouvelles données de l'utilisateur
-     * @return Les données mises à jour
+     * Updates the information of the currently authenticated user.
+     * 
+     * @param request the new user data
+     * @return the updated user data
      */
     @PutMapping("/me")
     public ResponseEntity<UserDto.Response> updateCurrentUser(@Valid @RequestBody UserDto.Request request) {

@@ -3,6 +3,10 @@ package com.openclassrooms.mddapi.model;
 import javax.persistence.*;
 import java.time.LocalDateTime;
 
+/**
+ * Article entity representing an article or blog post.
+ * Stores article content, metadata, and author information.
+ */
 @Entity
 @Table(name = "ARTICLES")
 public class Article {

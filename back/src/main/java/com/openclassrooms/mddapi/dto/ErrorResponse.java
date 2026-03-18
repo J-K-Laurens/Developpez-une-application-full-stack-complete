@@ -5,8 +5,8 @@ import java.time.LocalDateTime;
 import java.util.Map;
 
 /**
- * DTO standardisé pour les réponses d'erreur.
- * Inclut le timestamp, le code HTTP, le message et le chemin de la requête.
+ * Standardized DTO for error responses.
+ * Includes timestamp, HTTP status code, message, and request path.
  */
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class ErrorResponse {
@@ -19,7 +19,7 @@ public class ErrorResponse {
     private String errorCode;
     private Map<String, String> validationErrors;
 
-    // Constructeurs
+    // Constructors
     public ErrorResponse() {
         this.timestamp = LocalDateTime.now();
     }
@@ -43,7 +43,7 @@ public class ErrorResponse {
         this.validationErrors = validationErrors;
     }
 
-    // Getters et Setters
+    // Getters and Setters
     public LocalDateTime getTimestamp() {
         return timestamp;
     }

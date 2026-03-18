@@ -4,6 +4,13 @@ target/
 !**/src/main/**/target/
 !**/src/test/**/target/
 
+### Environment Variables - NEVER COMMIT! ###
+.env
+.env.local
+.env.*.local
+*.key
+*.pem
+
 ### STS ###
 .apt_generated
 .classpath

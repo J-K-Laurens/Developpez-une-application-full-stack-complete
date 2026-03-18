@@ -1,20 +1,24 @@
 package com.openclassrooms.mddapi.validation;
 
+/**
+ * Utility class for password validation.
+ * Enforces password strength requirements.
+ */
 public class PasswordValidator {
-
     private static final String PASSWORD_PATTERN =
-            "^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[!@#$%^&*()_+\\-=\\[\\]{};':\"\\\\|,.<>\\/?]).{8,}$";
+
+"^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[!@#$%^&*()_+\\-=\\[\\]{};':\"\\\\|,.<>\\/?]).{8,}$";
 
     /**
-     * Valide le mot de passe selon les critères :
-     * - Au moins 8 caractères
-     * - Au moins un chiffre
-     * - Au moins une lettre minuscule
-     * - Au moins une lettre majuscule
-     * - Au moins un caractère spécial
+     * Validates the password according to the following criteria:
+     * - At least 8 characters
+     * - At least one digit
+     * - At least one lowercase letter
+     * - At least one uppercase letter
+     * - At least one special character
      *
-     * @param password le mot de passe à valider
-     * @return true si le mot de passe est valide, false sinon
+     * @param password the password to validate
+     * @return true if password is valid, false otherwise
      */
     public static boolean isValid(String password) {
         if (password == null || password.isEmpty()) {
@@ -24,42 +28,42 @@ public class PasswordValidator {
     }
 
     /**
-     * Retourne un message d'erreur détaillé si le mot de passe ne respecte pas les critères
+     * Returns a detailed error message if the password does not meet the criteria.
      *
-     * @param password le mot de passe à valider
-     * @return un message d'erreur ou null si le mot de passe est valide
+     * @param password the password to validate
+     * @return an error message or null if password is valid
      */
     public static String getErrorMessage(String password) {
         if (password == null || password.isEmpty()) {
-            return "Le mot de passe est obligatoire.";
+            return "Password is required.";
         }
 
         StringBuilder errors = new StringBuilder();
 
         if (password.length() < 8) {
-            errors.append("- Au moins 8 caractères\n");
+            errors.append("- At least 8 characters\n");
         }
 
         if (!password.matches(".*[0-9].*")) {
-            errors.append("- Au moins un chiffre\n");
+            errors.append("- At least one digit\n");
         }
 
         if (!password.matches(".*[a-z].*")) {
-            errors.append("- Au moins une lettre minuscule\n");
+            errors.append("- At least one lowercase letter\n");
         }
 
         if (!password.matches(".*[A-Z].*")) {
-            errors.append("- Au moins une lettre majuscule\n");
+            errors.append("- At least one uppercase letter\n");
         }
 
         if (!password.matches(".*[!@#$%^&*()_+\\-=\\[\\]{};':\"\\\\|,.<>\\/?].*")) {
-            errors.append("- Au moins un caractère spécial (!@#$%^&*...)\n");
+            errors.append("- At least one special character (!@#$%^&*...)\n");
         }
 
         if (errors.length() == 0) {
-            return null; // Valide
+            return null; // Valid
         }
 
-        return "Le mot de passe doit respecter les critères suivants :\n" + errors.toString().trim();
+        return "The password must meet the following criteria:\n" + errors.toString().trim();
     }
 }

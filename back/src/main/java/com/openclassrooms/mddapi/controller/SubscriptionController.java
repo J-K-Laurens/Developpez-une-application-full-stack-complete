@@ -13,6 +13,10 @@ import org.springframework.web.bind.annotation.*;
 import javax.validation.constraints.Min;
 import java.util.List;
 
+/**
+ * REST Controller for subscription-related endpoints.
+ * Handles topic subscriptions for authenticated users.
+ */
 @RestController
 @RequestMapping("/api/subscriptions")
 @Validated
@@ -25,8 +29,9 @@ public class SubscriptionController {
     }
 
     /**
-     * Récupère tous les topics auxquels l'utilisateur connecté est abonné.
-     * @return Liste des topics abonnés
+     * Retrieves all topics the authenticated user is subscribed to.
+     * 
+     * @return list of subscribed topics
      */
     @GetMapping
     public ResponseEntity<List<Topic>> getMySubscriptions() {
@@ -35,34 +40,37 @@ public class SubscriptionController {
     }
 
     /**
-     * Abonne l'utilisateur connecté à un topic.
-     * @param topicId L'ID du topic
-     * @return Vide avec statut 201 Created
-     * @throws ResourceNotFoundException si le topic n'existe pas
+     * Subscribes the authenticated user to a topic.
+     * 
+     * @param topicId the topic ID
+     * @return empty response with status 201 Created
+     * @throws ResourceNotFoundException if topic not found
      */
     @PostMapping("/{topicId}")
-    public ResponseEntity<Void> subscribe(@PathVariable @Min(value = 1, message = "L'ID doit être supérieur à 0") Long topicId) {
+    public ResponseEntity<Void> subscribe(@PathVariable @Min(value = 1, message = "ID must be greater than 0") Long topicId) {
         String email = currentUserEmail();
         subscriptionService.subscribe(email, topicId);
         return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 
     /**
-     * Désabonne l'utilisateur connecté d'un topic.
-     * @param topicId L'ID du topic
-     * @return Vide avec statut 204 No Content
-     * @throws ResourceNotFoundException si le topic n'existe pas
+     * Unsubscribes the authenticated user from a topic.
+     * 
+     * @param topicId the topic ID
+     * @return empty response with status 204 No Content
+     * @throws ResourceNotFoundException if subscription not found
      */
     @DeleteMapping("/{topicId}")
-    public ResponseEntity<Void> unsubscribe(@PathVariable @Min(value = 1, message = "L'ID doit être supérieur à 0") Long topicId) {
+    public ResponseEntity<Void> unsubscribe(@PathVariable @Min(value = 1, message = "ID must be greater than 0") Long topicId) {
         String email = currentUserEmail();
         subscriptionService.unsubscribe(email, topicId);
         return ResponseEntity.noContent().build();
     }
 
     /**
-     * Récupère l'email de l'utilisateur actuellement authentifié.
-     * @return L'email de l'utilisateur
+     * Retrieves the email of the currently authenticated user.
+     * 
+     * @return the user's email
      */
     private String currentUserEmail() {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();

@@ -6,6 +6,9 @@ import org.springframework.stereotype.Repository;
 
 import java.util.List;
 
+/**
+ * Repository for the TopicArticleRelation entity.
+ */
 @Repository
 public interface TopicArticleRelationRepository extends JpaRepository<TopicArticleRelation, Long> {
 

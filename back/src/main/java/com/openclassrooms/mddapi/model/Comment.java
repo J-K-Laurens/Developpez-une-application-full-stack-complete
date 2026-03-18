@@ -3,6 +3,10 @@ package com.openclassrooms.mddapi.model;
 import javax.persistence.*;
 import java.time.LocalDateTime;
 
+/**
+ * Comment entity representing a comment on an article.
+ * Stores comment content and references to the article and author.
+ */
 @Entity
 @Table(name = "COMMENTS")
 public class Comment {

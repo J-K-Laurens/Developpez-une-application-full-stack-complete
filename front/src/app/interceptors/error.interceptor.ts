@@ -16,12 +16,16 @@ export class ErrorInterceptor implements HttpInterceptor {
   intercept(req: HttpRequest<unknown>, next: HttpHandler): Observable<HttpEvent<unknown>> {
     return next.handle(req).pipe(
       catchError((error: HttpErrorResponse) => {
-        // 401 = non authentifiée → redirection login
+        // 401 = non authentifiée → redirection login UNIQUEMENT si on n'est pas déjà sur une page d'auth
         if (error.status === 401) {
           this.sessionService.logOut();
-          this.router.navigate(['/connection']);
+          // Ne pas rediriger si déjà sur /login, /register ou /connection
+          const currentUrl = this.router.url;
+          if (!['/login', '/register', '/connection'].includes(currentUrl)) {
+            this.router.navigate(['/connection']);
+          }
         }
-        // 404, 400, 409 = erreurs métier → on laisse le composant gérer
+        // 404, 400, 409, 403 = erreurs métier → on laisse le composant gérer
         if (error.status === 404 || error.status === 400 || error.status === 409 || error.status === 403) {
           return throwError(() => error);
         }

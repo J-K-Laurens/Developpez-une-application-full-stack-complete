@@ -7,14 +7,15 @@ import { RegisterComponent } from './features/auth/components/register/register.
 import { AuthGuard } from './guards/auth.guard';
 import { UnauthGuard } from './guards/unauth.guard';
 
+
 const routes: Routes = [
   // Route par défaut - si pas connecté va au login, sinon aux articles
   { path: '', component: HomeComponent },
-  
-  // Routes publiques
-  { path: 'connection', component: ConnectionComponent },
-  { path: 'login', component: LoginComponent },
-  { path: 'register', component: RegisterComponent },
+
+  // Routes publiques protégées pour utilisateurs non connectés
+  { path: 'connection', component: ConnectionComponent, canActivate: [UnauthGuard] },
+  { path: 'login', component: LoginComponent, canActivate: [UnauthGuard] },
+  { path: 'register', component: RegisterComponent, canActivate: [UnauthGuard] },
 
   // Routes privées
   { path: 'articles', canActivate: [AuthGuard], loadChildren: () => import('./features/articles/articles.module').then(m => m.ArticlesModule) },

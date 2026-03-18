@@ -43,10 +43,10 @@ public class SpringSecurityConfig {
             .cors(cors -> cors.configurationSource(corsConfigurationSource()))
             .csrf(csrf -> csrf.disable())
             .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-            .authorizeRequests(auth -> auth
-                .antMatchers("/api/auth/register", "/api/auth/login",
-                        "/swagger-ui/**", "/v3/api-docs/**", "/swagger-ui.html",
-                        "/h2-console/**").permitAll()
+                .authorizeRequests(auth -> auth
+                .antMatchers("/api/auth/register", "/api/auth/login", "/api/auth/refresh",
+                    "/swagger-ui/**", "/v3/api-docs/**", "/swagger-ui.html",
+                    "/h2-console/**").permitAll()
                 .anyRequest().authenticated())
             .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
         return http.build();

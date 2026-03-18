@@ -4,7 +4,7 @@ import com.openclassrooms.mddapi.dto.AuthDto;
 import com.openclassrooms.mddapi.dto.UserDto;
 import com.openclassrooms.mddapi.exception.BusinessRuleException;
 import com.openclassrooms.mddapi.services.JwtService;
-import com.openclassrooms.mddapi.services.TokenBlacklistService;
+// ...existing code...
 import com.openclassrooms.mddapi.services.UserService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -32,14 +32,14 @@ public class AuthController {
     private final JwtService jwtService;
     private final AuthenticationManager authenticationManager;
     private final UserService userService;
-    private final TokenBlacklistService tokenBlacklistService;
+// ...existing code...
 
     public AuthController(JwtService jwtService, AuthenticationManager authenticationManager, 
-                         UserService userService, TokenBlacklistService tokenBlacklistService) {
+                         UserService userService) {
         this.jwtService = jwtService;
         this.authenticationManager = authenticationManager;
         this.userService = userService;
-        this.tokenBlacklistService = tokenBlacklistService;
+    // ...existing code...
     }
 
     /**
@@ -54,7 +54,26 @@ public class AuthController {
         Authentication authentication = authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(request.getEmail(), request.getPassword()));
         String token = jwtService.generateToken(authentication);
-        return ResponseEntity.ok(new AuthDto.TokenResponse(token));
+        String refreshToken = jwtService.generateRefreshToken(authentication);
+        return ResponseEntity.ok(new AuthDto.TokenResponse(token, refreshToken));
+    }
+
+    /**
+     * Refreshes the access token using a valid refresh token.
+     * @param request the refresh token
+     * @return a new access token and refresh token
+     */
+    @PostMapping("/refresh")
+    public ResponseEntity<AuthDto.RefreshResponse> refresh(@RequestBody AuthDto.RefreshRequest request) {
+        String refreshToken = request.getRefreshToken();
+        if (!jwtService.validateRefreshToken(refreshToken)) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                    .body(new AuthDto.RefreshResponse(null, null));
+        }
+        String email = jwtService.getEmailFromRefreshToken(refreshToken);
+        String token = jwtService.generateToken(email);
+        String newRefreshToken = jwtService.generateRefreshToken(email);
+        return ResponseEntity.ok(new AuthDto.RefreshResponse(token, newRefreshToken));
     }
 
     /**
@@ -72,7 +91,7 @@ public class AuthController {
         Authentication authentication = authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(request.getEmail(), request.getPassword()));
         String token = jwtService.generateToken(authentication);
-        return ResponseEntity.ok(new AuthDto.TokenResponse(token));
+        return ResponseEntity.ok(new AuthDto.TokenResponse(token, null));
     }
 
     /**
@@ -87,7 +106,7 @@ public class AuthController {
     }
 
     /**
-     * Logs out the current user by blacklisting their JWT token.
+    * Logs out the current user (blacklist removed).
      * After logout, the token can no longer be used for authentication.
      * 
      * @param request the HTTP request containing the Authorization header
@@ -101,8 +120,8 @@ public class AuthController {
             if (StringUtils.hasText(authHeader) && authHeader.startsWith("Bearer ")) {
                 String token = authHeader.substring(7);
                 
-                // Add token to blacklist
-                tokenBlacklistService.blacklistToken(token);
+                // Blacklist functionality removed
+                // ...existing code...
                 
                 // Clear security context
                 SecurityContextHolder.clearContext();

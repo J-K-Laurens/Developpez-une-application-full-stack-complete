@@ -42,6 +42,18 @@ public class AuthDto {
     @Value
     public static class TokenResponse {
         String token;
+        String refreshToken;
+    }
+
+    @Data
+    public static class RefreshRequest {
+        private String refreshToken;
+    }
+
+    @Value
+    public static class RefreshResponse {
+        String token;
+        String refreshToken;
     }
 
     @Value

@@ -18,10 +18,13 @@ export class ErrorInterceptor implements HttpInterceptor {
       catchError((error: HttpErrorResponse) => {
         // 401 = non authentifiée → redirection login
         if (error.status === 401) {
-          this.sessionService.logOut();
-          this.router.navigate(['/connection']);
+          // Ne pas déconnecter si la requête est /api/auth/me (rechargement profil)
+          if (!req.url.endsWith('/api/auth/me')) {
+            this.sessionService.logOut();
+            this.router.navigate(['/connection']);
+          }
         }
-        // 404, 400, 409 = erreurs métier → on laisse le composant gérer
+        // 404, 400, 409, 403 = erreurs métier → on laisse le composant gérer
         if (error.status === 404 || error.status === 400 || error.status === 409 || error.status === 403) {
           return throwError(() => error);
         }

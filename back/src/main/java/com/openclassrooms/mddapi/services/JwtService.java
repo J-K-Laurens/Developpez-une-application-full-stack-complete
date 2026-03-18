@@ -47,6 +47,10 @@ public class JwtService {
      */
     public String generateToken(Authentication authentication) {
         String email = authentication.getName();
+        return generateToken(email);
+    }
+
+    public String generateToken(String email) {
         Date now = new Date();
         Date expiryDate = new Date(now.getTime() + jwtExpirationMs);
         return Jwts.builder()
@@ -55,6 +59,48 @@ public class JwtService {
                 .setExpiration(expiryDate)
                 .signWith(getSigningKey(), SignatureAlgorithm.HS256)
                 .compact();
+    }
+
+    // Refresh token: JWT, longue durée (ex: 7 jours)
+    @Value("${jwt.refresh-expiration-ms:604800000}")
+    private long jwtRefreshExpirationMs;
+
+    public String generateRefreshToken(Authentication authentication) {
+        String email = authentication.getName();
+        return generateRefreshToken(email);
+    }
+
+    public String generateRefreshToken(String email) {
+        Date now = new Date();
+        Date expiryDate = new Date(now.getTime() + jwtRefreshExpirationMs);
+        return Jwts.builder()
+                .setSubject(email)
+                .setIssuedAt(now)
+                .setExpiration(expiryDate)
+                .signWith(getSigningKey(), SignatureAlgorithm.HS256)
+                .compact();
+    }
+
+    public boolean validateRefreshToken(String token) {
+        try {
+            Jwts.parserBuilder()
+                    .setSigningKey(getSigningKey())
+                    .build()
+                    .parseClaimsJws(token);
+            return true;
+        } catch (SignatureException | MalformedJwtException | ExpiredJwtException
+                | UnsupportedJwtException | IllegalArgumentException e) {
+            return false;
+        }
+    }
+
+    public String getEmailFromRefreshToken(String token) {
+        Claims claims = Jwts.parserBuilder()
+                .setSigningKey(getSigningKey())
+                .build()
+                .parseClaimsJws(token)
+                .getBody();
+        return claims.getSubject();
     }
 
     /**

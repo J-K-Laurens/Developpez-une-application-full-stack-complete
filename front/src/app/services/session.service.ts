@@ -1,7 +1,6 @@
 import { Injectable } from '@angular/core';
 import { BehaviorSubject, Observable } from 'rxjs';
 import { User } from '../interfaces/user.interface';
-import { AuthService } from '../features/auth/services/auth.service';
 
 @Injectable({
   providedIn: 'root'
@@ -13,19 +12,10 @@ export class SessionService {
 
   private isLoggedSubject = new BehaviorSubject<boolean>(this.isLogged);
 
-  constructor(private authService: AuthService) {
-    // Si connecté mais user non chargé, on récupère le profil
-    if (this.isLogged && !this.user) {
-      this.authService.me().subscribe({
-        next: (user) => {
-          this.user = user;
-          this.next();
-        },
-        error: () => {
-          this.logOut();
-        }
-      });
-    }
+  constructor() {
+    console.debug('SessionService init, token present=', !!localStorage.getItem('token'), 'refreshToken present=', !!localStorage.getItem('refreshToken'));
+    // NE PAS faire d'appels HTTP ici pour éviter circular dependency
+    // Les appels HTTP seront faits via APP_INITIALIZER et les guards asynchrones
   }
 
   public $isLogged(): Observable<boolean> {
@@ -45,7 +35,7 @@ export class SessionService {
     this.next();
   }
 
-  private next(): void {
+  public next(): void {
     this.isLoggedSubject.next(this.isLogged);
   }
 }

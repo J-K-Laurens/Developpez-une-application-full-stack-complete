@@ -9,7 +9,6 @@ Application full-stack: **Angular** (frontend) + **Spring Boot** (backend) avec 
 - ✅ **Java 11+** - Vérifier: `java -version`
 - ✅ **Node.js 16+** - Vérifier: `node -v`
 - ✅ **MySQL 8.0+** - Vérifier: `mysql -u root -p` puis `exit`
-- ✅ **Docker** (pour Redis) - [Télécharger ici](https://www.docker.com/products/docker-desktop/)
 - ✅ **Maven** - Inclus dans le repo (`mvnw.cmd`)
 
 ---
@@ -29,28 +28,7 @@ docker --version
 
 ---
 
-### 2️⃣ Démarrer Redis avec Docker
-
-Ouvrir **PowerShell** (n'importe où) et copier-coller:
-
-```powershell
-docker run -d -p 6379:6379 --name redis redis:latest
-```
-
-✅ Réponse: Un ID (exemple: `abc123def456`)
-
-**Vérifier que ça marche:**
-
-```powershell
-docker exec redis redis-cli ping
-# Réponse attendue: PONG
-```
-
-Si vous relancez le PC, relancer cette commande. C'est tout.
-
----
-
-### 3️⃣ Démarrer MySQL
+### 2️⃣ Démarrer MySQL
 
 Si MySQL n'est pas déjà en cours d'exécution:
 
@@ -136,7 +114,6 @@ npm start
 | **Frontend** | http://localhost:4200 |
 | **Backend** | http://localhost:8080 |
 | **Swagger UI** | http://localhost:8080/swagger-ui.html |
-| **Redis** | localhost:6379 (interne) |
 
 ---
 
@@ -147,8 +124,6 @@ npm start
 3. 🚪 **Logout** (bouton en haut à droite)
 4. ✅ Vérifier que vous êtes déconnecté
 
-Le token JWT est automatiquement révoqué dans Redis ✅
-
 ---
 
 ## 🛑 Arrêter l'Application
@@ -157,9 +132,6 @@ Le token JWT est automatiquement révoqué dans Redis ✅
 # Terminal 1 (Backend): Ctrl+C
 
 # Terminal 2 (Frontend): Ctrl+C
-
-# Arrêter Redis
-docker stop redis
 
 # Arrêter MySQL
 net stop MySQL80
@@ -191,22 +163,6 @@ Node.js n'est pas installé:
 
 ---
 
-### ❌ "Can't connect to Redis"
-
-```powershell
-# Vérifier que Redis tourne
-docker ps | findstr redis
-
-# Si rien → Relancer Redis
-docker run -d -p 6379:6379 --name redis redis:latest
-
-# Si erreur "name already in use":
-docker rm redis
-docker run -d -p 6379:6379 --name redis redis:latest
-```
-
----
-
 ### ❌ "Can't connect to MySQL"
 
 ```powershell
@@ -221,19 +177,16 @@ mysql -u root -p
 
 ---
 
-### ❌ "Port 3306/6379 already in use"
+### ❌ "Port 3306 already in use"
 
 Quelque chose utilise déjà ce port:
 
 ```powershell
 # Trouver le processus
-netstat -ano | findstr :6379
+netstat -ano | findstr :3306
 
 # Tuer le processus (ajuster PID)
 taskkill /PID <numero> /F
-
-# Relancer
-docker run -d -p 6379:6379 --name redis redis:latest
 ```
 
 ---
@@ -306,7 +259,7 @@ $env:SPRING_PROFILES_ACTIVE = "dev"
 
 ### Backend
 - ✅ **Authentification JWT** - Login/Register
-- ✅ **Token Blacklist** - Logout sécurisé (Redis)
+- ✅ **Token Blacklist** - Logout sécurisé
 - ✅ **Articles** - Créer, lire, commenter
 - ✅ **Topics** - Catégories d'articles
 - ✅ **Abonnements** - S'abonner aux topics
@@ -322,9 +275,6 @@ $env:SPRING_PROFILES_ACTIVE = "dev"
 
 ## ✅ Checklist de Démarrage
 
-- [ ] Docker Desktop installé et lancé
-- [ ] `docker run -d -p 6379:6379 --name redis redis:latest` ✅
-- [ ] `docker exec redis redis-cli ping` → `PONG`
 - [ ] MySQL en cours d'exécution (`net start MySQL80`)
 - [ ] `.env` créé dans `back/`
 - [ ] `mvn spring-boot:run` → "Started MddApiApplication"
@@ -339,8 +289,7 @@ Vous êtes prêt! 🎉
 
 | Problème | Solution |
 |----------|----------|
-| Redis ne démarre | Voir "Troubleshooting" ci-dessus |
-| Backend échoue | Vérifier MySQL + Redis en cours d'exécution |
+| Backend échoue | Vérifier MySQL en cours d'exécution |
 | Frontend ne charge | Vérifier `npm start` dans le dossier `front/` |
 | Port en utilisation | Voir "Port already in use" ci-dessus |
 

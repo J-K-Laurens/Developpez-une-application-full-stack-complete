@@ -19,14 +19,12 @@ import java.io.IOException;
 /**
  * JWT Authentication Filter for Spring Security.
  * Validates JWT tokens from request headers and sets authentication context.
-// ...existing code...
  */
 @Component
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
     private final JwtService jwtService;
     private final CustomUserDetailsService userDetailsService;
-// ...existing code...
 
     public JwtAuthenticationFilter(JwtService jwtService, CustomUserDetailsService userDetailsService) {
         this.jwtService = jwtService;
@@ -36,8 +34,6 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     /**
      * Filters incoming requests to validate JWT tokens.
      * Extracts user information from valid tokens and sets authentication.
-// ...existing code...
-     * 
      * @param request the HTTP request
      * @param response the HTTP response
      * @param filterChain the filter chain
@@ -50,7 +46,6 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         try {
             String jwt = getJwtFromRequest(request);
             if (StringUtils.hasText(jwt) && jwtService.validateToken(jwt)) {
-                // Blacklist functionality removed
                 String email = jwtService.getEmailFromToken(jwt);
                 UserDetails userDetails = userDetailsService.loadUserByUsername(email);
                 UsernamePasswordAuthenticationToken authentication =

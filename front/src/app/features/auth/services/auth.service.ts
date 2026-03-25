@@ -1,6 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
+import { RefreshResponse } from '../interfaces/refreshRequest.interface';
 import { LoginRequest } from '../interfaces/loginRequest.interface';
 import { AuthSuccess  } from '../interfaces/authSuccess.interface';
 import { RegisterRequest } from '../interfaces/registerRequest.interface';
@@ -25,5 +26,9 @@ export class AuthService {
 
   public me(): Observable<User> {
     return this.httpClient.get<User>(`${this.pathService}/me`);
+  }
+
+  public refresh(refreshToken: string): Observable<RefreshResponse> {
+    return this.httpClient.post<RefreshResponse>(`${this.pathService}/refresh`, { refreshToken });
   }
 }

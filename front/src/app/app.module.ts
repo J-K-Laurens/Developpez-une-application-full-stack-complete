@@ -15,6 +15,8 @@ import { AuthModule } from './features/auth/auth.module';
 import { JwtInterceptor } from './interceptors/jwt.interceptor';
 import { ErrorInterceptor } from './interceptors/error.interceptor';
 import { NavbarComponent } from './components/navbar/navbar.component';
+import { APP_INITIALIZER, Injector } from '@angular/core';
+import { InitService } from './init.service';
 
 @NgModule({
   declarations: [AppComponent, HomeComponent, ConnectionComponent, NavbarComponent],
@@ -31,8 +33,15 @@ import { NavbarComponent } from './components/navbar/navbar.component';
     MatInputModule,
   ],
   providers: [
+    { provide: HTTP_INTERCEPTORS, useClass: ErrorInterceptor, multi: true },
     { provide: HTTP_INTERCEPTORS, useClass: JwtInterceptor, multi: true },
-    { provide: HTTP_INTERCEPTORS, useClass: ErrorInterceptor, multi: true }
+    InitService,
+    {
+      provide: APP_INITIALIZER,
+      useFactory: (initService: InitService, injector: Injector) => initService.initializeSession(injector),
+      deps: [InitService, Injector],
+      multi: true
+    }
   ],
   bootstrap: [AppComponent],
 })

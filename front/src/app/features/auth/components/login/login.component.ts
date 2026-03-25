@@ -43,6 +43,7 @@ export class LoginComponent implements OnInit {
     this.authService.login({ email: emailOrUsername, password }).subscribe({
       next: (response) => {
         localStorage.setItem('token', response.token);
+        localStorage.setItem('refreshToken', response.refreshToken);
         this.authService.me().subscribe({
           next: (user) => {
             this.sessionService.logIn(user);

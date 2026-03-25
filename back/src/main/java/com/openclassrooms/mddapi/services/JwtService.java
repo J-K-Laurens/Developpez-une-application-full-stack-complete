@@ -90,6 +90,7 @@ public class JwtService {
             return true;
         } catch (SignatureException | MalformedJwtException | ExpiredJwtException
                 | UnsupportedJwtException | IllegalArgumentException e) {
+            logger.warn("Refresh token validation failed: {}", e.getMessage());
             return false;
         }
     }

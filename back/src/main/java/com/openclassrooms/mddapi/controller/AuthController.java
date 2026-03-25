@@ -14,6 +14,8 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.util.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -28,6 +30,8 @@ import javax.validation.Valid;
 @RequestMapping("/api/auth")
 @Validated
 public class AuthController {
+
+    private static final Logger logger = LoggerFactory.getLogger(AuthController.class);
 
     private final JwtService jwtService;
     private final AuthenticationManager authenticationManager;
@@ -66,14 +70,25 @@ public class AuthController {
     @PostMapping("/refresh")
     public ResponseEntity<AuthDto.RefreshResponse> refresh(@RequestBody AuthDto.RefreshRequest request) {
         String refreshToken = request.getRefreshToken();
-        if (!jwtService.validateRefreshToken(refreshToken)) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+        logger.debug("/api/auth/refresh called with refreshToken present={}", (refreshToken != null));
+        try {
+            if (!jwtService.validateRefreshToken(refreshToken)) {
+                logger.warn("Refresh token validation failed for token prefix={}",
+                        refreshToken != null ? refreshToken.substring(0, Math.min(10, refreshToken.length())) : "null");
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                        .body(new AuthDto.RefreshResponse(null, null));
+            }
+            String email = jwtService.getEmailFromRefreshToken(refreshToken);
+            logger.debug("Refresh token valid, email extracted={}", email);
+            String token = jwtService.generateToken(email);
+            String newRefreshToken = jwtService.generateRefreshToken(email);
+            logger.debug("Generated new tokens for email={}", email);
+            return ResponseEntity.ok(new AuthDto.RefreshResponse(token, newRefreshToken));
+        } catch (Exception ex) {
+            logger.error("Exception during refresh", ex);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .body(new AuthDto.RefreshResponse(null, null));
         }
-        String email = jwtService.getEmailFromRefreshToken(refreshToken);
-        String token = jwtService.generateToken(email);
-        String newRefreshToken = jwtService.generateRefreshToken(email);
-        return ResponseEntity.ok(new AuthDto.RefreshResponse(token, newRefreshToken));
     }
 
     /**
@@ -119,9 +134,7 @@ public class AuthController {
             String authHeader = request.getHeader("Authorization");
             if (StringUtils.hasText(authHeader) && authHeader.startsWith("Bearer ")) {
                 String token = authHeader.substring(7);
-                
-                // Blacklist functionality removed
-                // ...existing code...
+
                 
                 // Clear security context
                 SecurityContextHolder.clearContext();

@@ -4,7 +4,6 @@ import com.openclassrooms.mddapi.dto.AuthDto;
 import com.openclassrooms.mddapi.dto.UserDto;
 import com.openclassrooms.mddapi.exception.BusinessRuleException;
 import com.openclassrooms.mddapi.services.JwtService;
-// ...existing code...
 import com.openclassrooms.mddapi.services.UserService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -36,14 +35,12 @@ public class AuthController {
     private final JwtService jwtService;
     private final AuthenticationManager authenticationManager;
     private final UserService userService;
-// ...existing code...
 
     public AuthController(JwtService jwtService, AuthenticationManager authenticationManager, 
                          UserService userService) {
         this.jwtService = jwtService;
         this.authenticationManager = authenticationManager;
         this.userService = userService;
-    // ...existing code...
     }
 
     /**

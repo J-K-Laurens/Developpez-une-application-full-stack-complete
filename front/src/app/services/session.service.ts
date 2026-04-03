@@ -14,8 +14,8 @@ export class SessionService {
 
   constructor() {
     console.debug('SessionService init, token present=', !!localStorage.getItem('token'), 'refreshToken present=', !!localStorage.getItem('refreshToken'));
-    // NE PAS faire d'appels HTTP ici pour éviter circular dependency
-    // Les appels HTTP seront faits via APP_INITIALIZER et les guards asynchrones
+    // DO NOT make HTTP calls here to avoid circular dependency
+    // HTTP calls will be made via APP_INITIALIZER and asynchronous guards
   }
 
   public $isLogged(): Observable<boolean> {

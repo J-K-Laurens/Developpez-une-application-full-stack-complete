@@ -42,7 +42,7 @@ export class JwtInterceptor implements HttpInterceptor {
       this.isRefreshing = true;
       this.refreshTokenSubject.next(null);
 
-      // Appel direct au backend sans passer par AuthService pour éviter circular dependency
+      // Direct call to backend without going through AuthService to avoid circular dependency
       return this.httpClient.post<RefreshResponse>('/api/auth/refresh', { refreshToken }).pipe(
         switchMap((response: RefreshResponse) => {
           this.isRefreshing = false;

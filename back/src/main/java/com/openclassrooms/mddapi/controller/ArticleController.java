@@ -110,11 +110,11 @@ public class ArticleController {
     }
 
     /**
-     * Associe un topic à un article.
-     * @param articleId L'ID de l'article
-     * @param topicId L'ID du topic
-     * @return La relation créée
-     * @throws ResourceNotFoundException si l'article ou le topic n'existe pas
+     * Associates a topic with an article.
+     * @param articleId The article ID
+     * @param topicId The topic ID
+     * @return The created relationship
+     * @throws ResourceNotFoundException if the article or topic does not exist
      */
     @PostMapping("/{articleId}/topics/{topicId}")
     public ResponseEntity<TopicArticleRelation> addTopicToArticle(

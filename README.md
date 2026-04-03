@@ -1,10 +1,58 @@
-# 🚀 MDD API - Démarrage Windows (Étape par Étape)
+# 🚀 MDD API - Quickstart
 
-Application full-stack: **Angular** (frontend) + **Spring Boot** (backend) avec authentification JWT et logout sécurisé.
+Application full-stack: **Angular** + **Spring Boot** avec JWT (access + refresh) et prévention du logout.
 
 ---
 
-## 📋 Prérequis Windows
+## 📋 Prérequis
+
+- Java 11+ (`java -version`)
+- Node.js 16+ (`node -v`)
+- MySQL ou PostgreSQL (ou Docker)
+- Maven (`./mvnw` ou `mvnw.cmd` inclus)
+
+---
+
+## ▶️ Lancer en local
+
+### 1) Backend
+
+1. Aller dans `back/`
+2. Créer `.env` (ou variables d'environnement) :
+   - `DB_USERNAME=...`
+   - `DB_PASSWORD=...`
+   - `JWT_SECRET=...` (32+ chars)
+3. Lancer :
+   - `cd back`
+   - `$env:SPRING_PROFILES_ACTIVE='dev'`
+   - `./mvnw spring-boot:run`
+
+### 2) Frontend
+
+1. Aller dans `front/`
+2. `npm install`
+3. `npm start`
+
+### 3) URLs
+
+- Frontend : `http://localhost:4200`
+- Backend : `http://localhost:8080`
+- Swagger (dev) : `http://localhost:8080/swagger-ui.html`
+
+---
+
+## 🛠️ Conseils rapides
+
+- `jwt.expiration-ms` = 86400000 (24h)
+- `jwt.refresh-expiration-ms` = 604800000 (7 jours)
+- Utiliser `./mvnw test` et `npm test` pour tests.
+
+---
+
+## ⚠️ Arrêt
+
+- Ctrl+C pour backend et frontend
+- `net stop MySQL80` (si service Windows)
 
 - ✅ **Java 11+** - Vérifier: `java -version`
 - ✅ **Node.js 16+** - Vérifier: `node -v`

@@ -9,15 +9,15 @@ import { UnauthGuard } from './guards/unauth.guard';
 
 
 const routes: Routes = [
-  // Route par défaut - si pas connecté va au login, sinon aux articles
+  // Default route - if not logged in go to login, otherwise go to articles
   { path: '', component: HomeComponent },
 
-  // Routes publiques protégées pour utilisateurs non connectés
+  // Protected public routes for users who are not logged in
   { path: 'connection', component: ConnectionComponent, canActivate: [UnauthGuard] },
   { path: 'login', component: LoginComponent, canActivate: [UnauthGuard] },
   { path: 'register', component: RegisterComponent, canActivate: [UnauthGuard] },
 
-  // Routes privées
+  // Private routes
   { path: 'articles', canActivate: [AuthGuard], loadChildren: () => import('./features/articles/articles.module').then(m => m.ArticlesModule) },
   { path: 'themes', canActivate: [AuthGuard], loadChildren: () => import('./features/topics/topics.module').then(m => m.TopicsModule) },
   { path: 'profile', canActivate: [AuthGuard], loadChildren: () => import('./features/profile/profile.module').then(m => m.ProfileModule) },

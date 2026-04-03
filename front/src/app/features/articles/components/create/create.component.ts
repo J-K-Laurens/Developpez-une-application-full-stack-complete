@@ -63,7 +63,7 @@ export class CreateComponent implements OnInit {
 
     const { titre, content, topicId } = this.createForm.value;
 
-    // Créer l'article
+    // Create the article
     const article = {
       titre,
       content,
@@ -73,7 +73,7 @@ export class CreateComponent implements OnInit {
 
     this.articlesService.createArticle(article).subscribe({
       next: (createdArticle) => {
-        // Ajouter l'article au topic
+        // Add the article to the topic
         this.articlesService.addTopicToArticle(createdArticle.id, topicId).subscribe({
           next: () => {
             this.isLoading = false;

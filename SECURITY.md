@@ -1,22 +1,40 @@
 # 🔐 Guide de Sécurité - MDD API
 
-## Gestion des Secrets et Variables d'Environnement
+## Règles de base
 
-### ⚠️ RÈGLES ESSENTIELLES
+- Ne jamais committer les secrets (`.env`, clés, mots de passe)
+- Ne jamais logguer de secrets (JWT, mot de passe)
+- Utiliser des variables d'environnement (local `.env`, prod env vars)
 
-1. **JAMAIS committer les secrets** 
-   - `.env` files
-   - Clés privées
-   - Mots de passe
+## Configuration minimale requise
 
-2. **JAMAIS afficher les secrets en clair**
-   - Documentation
-   - Logs
-   - Code source
+### local/back/.env
+- `DB_USERNAME=root`
+- `DB_PASSWORD=...`
+- `JWT_SECRET=...` (32+ caractères)
 
-3. **TOUJOURS utiliser des variables d'environnement**
-   - En développement: fichier `.env`
-   - En production: variables d'environnement du serveur/cloud
+### production
+- `DB_HOST=...`
+- `DB_USERNAME=...`
+- `DB_PASSWORD=...`
+- `JWT_SECRET=...`
+- `SPRING_PROFILES_ACTIVE=prod`
+
+## JWT
+- `jwt.expiration-ms` = 24h (par défaut)
+- `jwt.refresh-expiration-ms` = 7j (par défaut)
+- Logout client: supprimer token localement, next request 401, refresh token possible
+
+---
+
+## Checklist prod
+- [ ] Profil `prod` activé
+- [ ] JWT_SECRET défini via variable d'env
+- [ ] `spring.jpa.hibernate.ddl-auto=validate`
+- [ ] `springdoc.swagger-ui.enabled=false`
+- [ ] HTTPS + CORS sécurisés
+- [ ] Logs sans données sensibles
+
 
 ---
 

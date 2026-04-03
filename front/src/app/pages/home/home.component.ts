@@ -14,7 +14,7 @@ export class HomeComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    // Si déjà connecté, redirige vers articles
+    // If already logged in, redirect to articles
     if (this.sessionService.isLogged) {
       this.router.navigate(['/articles']);
     }

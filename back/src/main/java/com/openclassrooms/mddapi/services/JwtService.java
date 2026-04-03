@@ -61,7 +61,7 @@ public class JwtService {
                 .compact();
     }
 
-    // Refresh token: JWT, longue durée (ex: 7 jours)
+    // Refresh token: JWT, long-lived (e.g., 7 days)
     @Value("${jwt.refresh-expiration-ms:604800000}")
     private long jwtRefreshExpirationMs;
 

@@ -6,32 +6,32 @@ export class PasswordValidator {
       const value = control.value;
 
       if (!value) {
-        return null; // Ne valide pas si vide (le required le fera)
+        return null; // Do not validate if empty (required validator will handle this)
       }
 
       const errors: ValidationErrors = {};
 
-      // Au moins 8 caractères
+      // At least 8 characters
       if (value.length < 8) {
         errors['minLength'] = { requiredLength: 8, actualLength: value.length };
       }
 
-      // Au moins un chiffre
+      // At least one digit
       if (!/\d/.test(value)) {
         errors['digit'] = true;
       }
 
-      // Au moins une lettre minuscule
+      // At least one lowercase letter
       if (!/[a-z]/.test(value)) {
         errors['lowercase'] = true;
       }
 
-      // Au moins une lettre majuscule
+      // At least one uppercase letter
       if (!/[A-Z]/.test(value)) {
         errors['uppercase'] = true;
       }
 
-      // Au moins un caractère spécial
+      // At least one special character
       if (!/[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]/.test(value)) {
         errors['special'] = true;
       }

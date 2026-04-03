@@ -9,13 +9,13 @@ import { User } from './interfaces/user.interface';
 export class InitService {
   constructor() {}
 
-  // Appelé via APP_INITIALIZER, après que l'injector soit complètement construit
+  // Called via APP_INITIALIZER, after the injector is fully constructed
   public initializeSession(injector: Injector): () => Promise<void> {
     return () => {
       const httpClient = injector.get(HttpClient);
       const sessionService = injector.get(SessionService);
 
-      // Si connecté mais user non chargé, on récupère le profil via /me
+      // If logged in but user is not loaded, fetch profile via /me
       if (sessionService.isLogged && !sessionService.user) {
         console.debug('InitService - loading user via /me');
         return new Promise((resolve) => {
@@ -27,8 +27,8 @@ export class InitService {
             },
             error: (err) => {
               console.debug('InitService - /me failed, JwtInterceptor will handle refresh if available', err);
-              // JwtInterceptor va gérer le 401 et appeler le refresh automatiquement
-              resolve(); // Continue même si /me échoue
+              // JwtInterceptor will handle 401 and trigger refresh automatically
+              resolve(); // Continue even if /me fails
             }
           });
         });

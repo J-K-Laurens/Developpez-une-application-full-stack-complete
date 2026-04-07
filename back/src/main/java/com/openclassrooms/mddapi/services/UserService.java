@@ -53,13 +53,13 @@ public class UserService {
 
     /**
      * Updates a user's profile information.
-     * Validates email uniqueness and password strength.
+     * Validates email and username uniqueness and password strength.
      * 
      * @param currentEmail the user's current email
      * @param request the update request with new user data
      * @return the updated user response DTO
      * @throws ResourceNotFoundException if user not found
-     * @throws BusinessRuleException if email already exists
+     * @throws BusinessRuleException if email or username already exists
      * @throws ValidationException if password is invalid
      */
     public UserDto.Response updateUser(String currentEmail, UserDto.Request request) {
@@ -67,9 +67,12 @@ public class UserService {
                 .orElseThrow(() -> new ResourceNotFoundException("User", "email", currentEmail));
 
         if (request.getFirstName() != null && !request.getFirstName().isBlank()) {
+            if (!request.getFirstName().equals(user.getFirstName()) && userRepository.existsByFirstName(request.getFirstName())) {
+                throw new BusinessRuleException("Un compte existe déjà avec ce nom d'utilisateur", "USERNAME_ALREADY_EXISTS");
+            }
             user.setFirstName(request.getFirstName());
         }
-        if (request.getLastName() != null && !request.getLastName().isBlank()) {
+        if (request.getLastName() != null && !request.getLastName().isBlank()) { 
             user.setLastName(request.getLastName());
         }
         if (request.getEmail() != null && !request.getEmail().isBlank()) {
@@ -90,17 +93,20 @@ public class UserService {
 
     /**
      * Registers a new user account.
-     * Validates email uniqueness and password strength.
+     * Validates email and username uniqueness and password strength.
      * 
      * @param email the user's email address
      * @param name the user's first name
      * @param rawPassword the user's raw password (will be encoded)
-     * @throws BusinessRuleException if email already exists
+     * @throws BusinessRuleException if email or username already exists
      * @throws ValidationException if password is invalid
      */
     public void register(String email, String name, String rawPassword) {
         if (userRepository.existsByEmail(email)) {
             throw new BusinessRuleException("Un compte existe déjà avec cet email", "EMAIL_ALREADY_EXISTS");
+        }
+        if (userRepository.existsByFirstName(name)) {
+            throw new BusinessRuleException("Un compte existe déjà avec ce nom d'utilisateur", "USERNAME_ALREADY_EXISTS");
         }
         if (!PasswordValidator.isValid(rawPassword)) {
             throw new ValidationException(PasswordValidator.getErrorMessage(rawPassword));

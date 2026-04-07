@@ -8,7 +8,7 @@ import java.time.LocalDateTime;
  * Maps many-to-many relationship between topics and articles.
  */
 @Entity
-@Table(name = "`TOPIC_&_ARTICLE_RELATIONS`")
+@Table(name = "`topic_and_article_relations`")
 public class TopicArticleRelation {
 
     @Id

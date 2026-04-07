@@ -6,7 +6,9 @@ CREATE TABLE `USERS` (
   `email` VARCHAR(255),
   `password` VARCHAR(255),
   `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-  `updated_at` DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+  `updated_at` DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  UNIQUE KEY `unique_email` (`email`),
+  UNIQUE KEY `unique_first_name` (`first_name`)
 );
 
 CREATE TABLE `ARTICLES` (
@@ -38,7 +40,7 @@ CREATE TABLE `TOPICS` (
   `date` TIMESTAMP
 );
 
-CREATE TABLE `TOPIC_&_ARTICLE_RELATIONS` (
+CREATE TABLE `topic_and_article_relations` (
   `id` INT PRIMARY KEY AUTO_INCREMENT,
   `topic_id` int,
   `article_id` int,

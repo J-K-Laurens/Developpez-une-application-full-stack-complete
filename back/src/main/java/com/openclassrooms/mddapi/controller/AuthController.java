@@ -93,7 +93,7 @@ public class AuthController {
      * 
      * @param request the registration data
      * @return a JWT token for subsequent requests
-     * @throws BusinessRuleException if an account already exists with this email
+     * @throws BusinessRuleException if an account already exists with this email or username
      */
     @PostMapping("/register")
     public ResponseEntity<AuthDto.TokenResponse> register(@Valid @RequestBody AuthDto.RegisterRequest request) {
@@ -103,7 +103,8 @@ public class AuthController {
         Authentication authentication = authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(request.getEmail(), request.getPassword()));
         String token = jwtService.generateToken(authentication);
-        return ResponseEntity.ok(new AuthDto.TokenResponse(token, null));
+        String refreshToken = jwtService.generateRefreshToken(authentication);
+        return ResponseEntity.ok(new AuthDto.TokenResponse(token, refreshToken));
     }
 
     /**

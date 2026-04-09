@@ -30,6 +30,7 @@ export class SessionService {
 
   public logOut(): void {
     localStorage.removeItem('token');
+    localStorage.removeItem('refreshToken');
     this.user = undefined;
     this.isLogged = false;
     this.next();
